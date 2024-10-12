@@ -5,6 +5,7 @@ import Login from "./Authentication/Login";
 import SignUpUser from "./Authentication/SignUpUser";
 import OtpVerification from "./Authentication/OtpVerification";
 import Homepage from "./homepage";
+import HomPageData from "./Admin/HomePageData";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/OtpVerification" element={<OtpVerification />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/Homepagedata" element={<HomPageData />} />
       </Routes>
     </Router>
   );
