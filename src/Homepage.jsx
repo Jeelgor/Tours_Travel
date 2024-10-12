@@ -8,6 +8,8 @@ const Homepage = () => {
 
             <h2>Hello this is home</h2>
             <h1>testing</h1>
+
+            <h1>please take pull</h1>
         </>
     )
 }
