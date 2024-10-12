@@ -7,13 +7,8 @@ const Homepage = () => {
             <div>homepage</div>
 
             <h2>Hello this is home</h2>
+            <h1>testing</h1>
         </>
-=======
-        <div>
-            <div>homepage</div>
-            <h1>hello aditya</h1>
-        </div>
-
     )
 }
 
