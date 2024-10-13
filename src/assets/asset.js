@@ -1,3 +1,4 @@
+import Logo from './assets/Logo.jpg';
 // Importing images from the 'london' folder
 import london1 from "./london/london1.jpg";
 import london2 from "./london/london2.jpg";
@@ -63,6 +64,7 @@ import singapore16 from "./singapore/singapore16.jpg";
 
 // Exporting the images with the categorized structure
 export const assets = {
+  Logo,
   london: {
     london1,
     london2,
