@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./Authentication/Login";
 import SignUpUser from "./Authentication/SignUpUser";
 import OtpVerification from "./Authentication/OtpVerification";
-import Homepage from "./homepage";
+import Homepage from "./pages/Homepage";
 import HomPageData from "./Admin/HomePageData";
 
 function App() {
