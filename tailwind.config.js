@@ -5,6 +5,7 @@ export default {
     extend: {
       colors: {
         lightblue: "#7968fc",
+        navbar_color:'#95a5a6',
       },
     },
   },

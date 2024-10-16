@@ -1,4 +1,7 @@
-import Logo from './assets/Logo.jpg';
+import Logo from './Logo.jpg';
+import avatar from './avatar.png';
+import arrows from './arrows.png';
+import navbar_logo from './navbar_logo.png';
 // Importing images from the 'london' folder
 import london1 from "./london/london1.jpg";
 import london2 from "./london/london2.jpg";
@@ -65,6 +68,9 @@ import singapore16 from "./singapore/singapore16.jpg";
 // Exporting the images with the categorized structure
 export const assets = {
   Logo,
+  avatar,
+  arrows,
+  navbar_logo,
   london: {
     london1,
     london2,
