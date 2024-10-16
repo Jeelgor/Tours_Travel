@@ -14,7 +14,7 @@ const NavBar = () => {
     }
     return (
         <>
-            <nav className='px-4 py-2'>
+            <nav className='px-4 py-2 mx-4 sm:mx-[4%]'>
                 <section className='flex justify-between items-center relative z-30'>
 
                     {/* logo */}
