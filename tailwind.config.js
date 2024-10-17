@@ -7,6 +7,7 @@ export default {
         lightblue: "#7968fc",
         Darkblue: "#130F40",
         Skyblue: "#30C6D8",
+        navbar_color:'#95a5a6',
       },
     },
   },
