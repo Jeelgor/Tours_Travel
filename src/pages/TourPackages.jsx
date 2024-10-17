@@ -1,5 +1,5 @@
 import { React, Image } from 'react';
-import Navbar from '../component/Navbar';
+import Navbar from '../components/NavBar';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";

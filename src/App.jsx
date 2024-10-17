@@ -7,7 +7,7 @@ import OtpVerification from "./Authentication/OtpVerification";
 import Homepage from "./pages/Homepage";
 import HomPageData from "./Admin/HomePageData";
 import TourPackages from "./pages/TourPackages";
-import Navbar from "./component/Navbar";
+import Navbar from "./components/NavBar";
 
 // import HomPageData from "./Admin/HomePageData";
 import NavBar from "./components/NavBar";

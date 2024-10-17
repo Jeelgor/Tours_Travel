@@ -7,7 +7,7 @@ const SubscribeBanner = () => {
 
       {/* Adjust max-w class to control the width */}
       <div className="bg-white flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg max-w-6xl mx-auto">
-        
+
         {/* Left Side - Image */}
         <div className="md:w-1/2 w-full">
           <img
@@ -25,13 +25,13 @@ const SubscribeBanner = () => {
           </h2>
 
           {/* Input & Button */}
-          <div className="flex w-full justify-center items-center space-x-4">
+          <div className="md:flex w-full justify-center items-center space-x-4">
             <input
               type="email"
               placeholder="Enter your email"
               className="flex-grow p-3 rounded-full shadow-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <button className="bg-teal-500 text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-teal-600 transition">
+            <button className="mt-5 md:mt-0 bg-teal-500 text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-teal-600 transition">
               Subscribe
             </button>
           </div>

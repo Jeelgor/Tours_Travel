@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/asset'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { faXmark, faBars, faL } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faBars, } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const NavBar = () => {
