@@ -25,7 +25,7 @@ const SubscribeBanner = () => {
           </h2>
 
           {/* Input & Button */}
-          <div className="md:flex w-full justify-center items-center space-x-4">
+          <div className="md:flex w-full justify-center items-center text-center space-x-4">
             <input
               type="email"
               placeholder="Enter your email"

@@ -7,8 +7,6 @@ import OtpVerification from "./Authentication/OtpVerification";
 import Homepage from "./pages/Homepage";
 import HomPageData from "./Admin/HomePageData";
 import TourPackages from "./pages/TourPackages";
-import Navbar from "./components/NavBar";
-
 // import HomPageData from "./Admin/HomePageData";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -43,7 +41,6 @@ function MainContent() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/Homepagedata" element={<HomPageData />} />
         <Route path="/TourPackages" element={<TourPackages />} />
-        <Route path="/navbar" element={<Navbar />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/my-profile" element={<MyProfile />} />

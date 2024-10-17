@@ -1,5 +1,4 @@
 import { React, Image } from 'react';
-import Navbar from '../components/NavBar';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
@@ -8,7 +7,6 @@ import bannerimg from "../assets/banner.png";
 const TourPackages = () => {
     return (
         <>
-            <Navbar />
             <div className='h-[87px] bg-Darkblue flex justify-center items-center'>
                 <div className='flex space-x-4'>
 
