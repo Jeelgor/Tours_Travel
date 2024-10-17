@@ -5,6 +5,8 @@ export default {
     extend: {
       colors: {
         lightblue: "#7968fc",
+        Darkblue: "#130F40",
+        Skyblue: "#30C6D8",
       },
     },
   },

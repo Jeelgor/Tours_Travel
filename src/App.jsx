@@ -6,6 +6,8 @@ import SignUpUser from "./Authentication/SignUpUser";
 import OtpVerification from "./Authentication/OtpVerification";
 import Homepage from "./pages/Homepage";
 import HomPageData from "./Admin/HomePageData";
+import TourPackages from "./pages/TourPackages";
+import Navbar from "./component/Navbar";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/OtpVerification" element={<OtpVerification />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/Homepagedata" element={<HomPageData />} />
+        <Route path="/TourPackages" element={<TourPackages />} />
+        <Route path="/navbar" element={<Navbar />} />
       </Routes>
     </Router>
   );
