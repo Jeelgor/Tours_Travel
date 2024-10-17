@@ -2,6 +2,9 @@ import Logo from './Logo.jpg';
 import avatar from './avatar.png';
 import arrows from './arrows.png';
 import navbar_logo from './navbar_logo.png';
+import dollar from './dollar.png';
+import booking from './booking.png';
+import experience from './experience.png';
 // Importing images from the 'london' folder
 import london1 from "./london/london1.jpg";
 import london2 from "./london/london2.jpg";
@@ -71,6 +74,9 @@ export const assets = {
   avatar,
   arrows,
   navbar_logo,
+  booking,
+  experience,
+  dollar,
   london: {
     london1,
     london2,

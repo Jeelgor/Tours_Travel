@@ -18,8 +18,8 @@ const NavBar = () => {
                 <section className='flex justify-between items-center relative z-30'>
 
                     {/* logo */}
-                    <div className={`w-[9vmin] sm:w-[8vmin]`}>
-                        <img src="icon.jpg" alt="" />
+                    <div className={`w-[9vmin] sm:w-[8vmin] cursor-pointer`}>
+                        <img onClick={()=>navigate(`/homepage`)} src="icon.jpg" alt="" />
                     </div>
 
                     {/* menu */}
