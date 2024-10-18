@@ -13,8 +13,6 @@ const Homepage = () => {
                 <TopPackage/>
                 <SubscribeBanner/>
             </div>
-
-            
         </>
     )
 }
