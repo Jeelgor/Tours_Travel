@@ -16,6 +16,7 @@ import Package from "./pages/Package";
 import PackageDetail from "./pages/PackageDetail";
 import MyProfile from "./pages/MyProfile";
 import MyPackage from "./pages/MyPackage";
+import AddPackages from "./Admin/AddTourpackages";
 function App() {
   return (
     <Router>
@@ -49,6 +50,7 @@ function MainContent() {
         <Route path="/package" element={<Package />} />
         <Route path="/package/:package-speciality" element={<Package />} />
         <Route path="/package-detail/:pkgId" element={<PackageDetail />} />
+        <Route path="/AddPackages" element={<AddPackages/>} />
       </Routes>
       {/* Conditionally render the NavBar only if the current route is not in hideNavBarRoutes */}
       {!hideNavBarRoutes.includes(location.pathname) && <Footer/>}
