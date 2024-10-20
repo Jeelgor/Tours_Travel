@@ -1,8 +1,5 @@
-<<<<<<< Updated upstream
 import { React, Image } from 'react';
-=======
-import React, { useEffect, useState } from 'react';
->>>>>>> Stashed changes
+import { useEffect, useState } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
@@ -22,10 +19,7 @@ const TourPackages = () => {
     })
     return (
         <>
-<<<<<<< Updated upstream
-=======
             {/* Search Section */}
->>>>>>> Stashed changes
             <div className='h-[87px] bg-Darkblue flex justify-center items-center'>
                 <div className='flex space-x-4'>
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
