@@ -28,7 +28,7 @@ const NavBar = () => {
                             <li>Home</li>
                             <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
                         </NavLink>
-                        <NavLink to="/package">
+                        <NavLink to="/TourPackages">
                             <li>All Packages</li>
                             <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
                         </NavLink>
@@ -76,7 +76,7 @@ const NavBar = () => {
                         <NavLink to="/homepage" onClick={navBarToggle}>
                             <li className='hover:text-black'>Home</li>
                         </NavLink>
-                        <NavLink to="/package" onClick={navBarToggle}>
+                        <NavLink to="/TourPackages" onClick={navBarToggle}>
                             <li className='hover:text-black'>All Packages</li>
                         </NavLink>
                         <NavLink to="/about" onClick={navBarToggle}>

@@ -8,6 +8,7 @@ import experience from './experience.png';
 import FaceBook from './FaceBook.png';
 import Twitter from './Twitter.png';
 import YouTube from './YouTube.png';
+import CommonAreas from './CommonAreas.png'
 // Importing images from the 'london' folder
 import london1 from "./london/london1.jpg";
 import london2 from "./london/london2.jpg";
@@ -83,6 +84,7 @@ export const assets = {
   FaceBook,
   Twitter,
   YouTube,
+  CommonAreas,
   london: {
     london1,
     london2,
@@ -191,7 +193,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg2",
-      gallery: [london1, london2, london3],
+      gallery: [london4, london5, london6],
       overview: [
         "London Explorer",
         "An exciting adventure in London, exploring its famous landmarks and enjoying unique experiences.",
@@ -222,7 +224,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg3",
-      gallery: [london1, london2, london3],
+      gallery: [london7, london8, london9],
       overview: [
         "Classic London Experience",
         "Immerse yourself in the rich culture and history of London with this classic package.",
@@ -253,7 +255,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg4",
-      gallery: [london1, london2, london3],
+      gallery: [london10, london11, london12],
       overview: [
         "London Luxury Stay",
         "Indulge in a luxurious getaway with top-notch amenities and personalized services.",
@@ -284,7 +286,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg5",
-      gallery: [london1, london2, london3],
+      gallery: [london13, london14, london15],
       overview: [
         "London Family Vacation",
         "A fun-filled vacation designed for families, featuring activities for all ages.",
@@ -315,7 +317,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg6",
-      gallery: [london1, london2, london3],
+      gallery: [london16, london17, london18],
       overview: [
         "London Art & Culture",
         "Explore London's artistic side through gallery visits and cultural experiences.",
@@ -346,7 +348,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg7",
-      gallery: [london1, london2, london3],
+      gallery: [london19, london20, london21],
       overview: [
         "Adventurous London",
         "For thrill-seekers, this package includes exciting outdoor activities and adventures.",
@@ -377,7 +379,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg8",
-      gallery: [london1, london2, london3],
+      gallery: [london22, london23, london24],
       overview: [
         "Culinary Tour of London",
         "Indulge in London's vibrant culinary scene with exclusive dining experiences.",
@@ -408,7 +410,7 @@ export const _PackageDetails = [
     },
     {
       _id : "pkg9",
-      gallery: [london1, london2, london3],
+      gallery: [london1, london7, london3],
       overview: [
         "London Sports Experience",
         "Enjoy a sports-filled vacation with match tickets and stadium tours.",
@@ -1446,7 +1448,7 @@ export const _PackageDetails = [
 
 // Top Packages
 
-export const _topPackages = [
+export const _TopPackages = [
     {
       _id: "pkg1",
       title: "London City Break",
@@ -1651,7 +1653,7 @@ export const _topPackages = [
 
 // All Packages
 
-export const AllPackages = [
+export const _AllPackages = [
   {
     _id: "pkg11",
     title: "Kuala Lumpur Highlights",

@@ -20,7 +20,7 @@ const TopPackage = () => {
             {topPackages.map((item) => (
               <div
                 key={item._id}
-                onClick={() => navigate(`/package-detail/${item._id}`)}
+                onClick={() => navigate(`/TourPackages-detail/${item._id}`)}
                 className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
               >
                 {/* Image */}
