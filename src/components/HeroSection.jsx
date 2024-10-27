@@ -30,13 +30,11 @@ const HeroSection = () => {
     e.preventDefault();
     // Update the context with form data
     setFormData(formState);
-    navigate('/package');
-    // Add navigation or any other action after form submission
+    navigate('/TourPackages');
   };
 
   return (
     <section className="relative w-full rounded-xl overflow-hidden">
-      {/* Background Image - Visible only on screens 640px and above */}
       <div className="absolute inset-0 overflow-hidden hidden sm:block ">
         <img
           src={assets.singapore.singapore14}

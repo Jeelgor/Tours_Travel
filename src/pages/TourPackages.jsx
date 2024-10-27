@@ -1,4 +1,4 @@
-import { React, Image } from 'react';
+import { React, Image, useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
@@ -6,8 +6,10 @@ import { GoPeople } from "react-icons/go";
 import bannerimg from "../assets/banner.png";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AppContext } from '../context/AppContext';
 
 const TourPackages = () => {
+    const { formData } = useContext(AppContext);
     const [getData, setgetData] = useState();
     const navigate = useNavigate();
     useEffect(() => {
@@ -28,6 +30,7 @@ const TourPackages = () => {
                             type="text"
                             placeholder="From City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+                            value={formData.fromCity}
                         />
                     </div>
 
@@ -37,6 +40,8 @@ const TourPackages = () => {
                             type="text"
                             placeholder="To City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+                            value={formData.toCity}
+
                         />
                     </div>
 
@@ -45,6 +50,8 @@ const TourPackages = () => {
                         <input
                             type="date"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+                            value={formData.departureDate}
+
                         />
                     </div>
 
@@ -54,6 +61,7 @@ const TourPackages = () => {
                             type="number"
                             placeholder="People"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+                            value={formData.guests}
                         />
                     </div>
                     <div className='w-[200px] h-[41px]'>

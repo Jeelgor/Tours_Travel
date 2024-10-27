@@ -1,17 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { assets } from '../assets/asset'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { faXmark, faBars, } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 
 const NavBar = () => {
     const navigate = useNavigate();
     const [token, setToken] = useState(true);
     const [isNavOpen, setIsNavOpen] = useState(false)
+    const [userEmail, SetEmail] = useState(null);
 
     const navBarToggle = () => {
         setIsNavOpen(!isNavOpen);
     }
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+    };
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem("authToken");
+            if (token) {
+                try {
+                    const response = await axios.get('http://localhost:3000/Auth/users/userProfile', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    SetEmail(response.data);
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
+        };
+        fetchUser();
+    }, []);
     return (
         <>
             <nav className='px-4 py-2 mx-4 sm:mx-[4%]'>
@@ -19,7 +42,7 @@ const NavBar = () => {
 
                     {/* logo */}
                     <div className={`w-[9vmin] sm:w-[8vmin] cursor-pointer`}>
-                        <img onClick={()=>navigate(`/homepage`)} src="icon.jpg" alt="" />
+                        <img onClick={() => navigate(`/homepage`)} src="icon.jpg" alt="" />
                     </div>
 
                     {/* menu */}
@@ -28,7 +51,7 @@ const NavBar = () => {
                             <li>Home</li>
                             <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
                         </NavLink>
-                        <NavLink to="/package">
+                        <NavLink to="/TourPackages">
                             <li>All Packages</li>
                             <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
                         </NavLink>
@@ -44,6 +67,15 @@ const NavBar = () => {
 
                     {/* profile */}
                     <div className={`flex`}>
+                        {userEmail ? (
+                            <div>
+                                <p>Logged in as: {userEmail.FirstName}</p>
+                                <p>Email: {userEmail.Email}</p>
+                            </div>
+                        ) : (
+                            <p>Please log in to see your profile.</p>
+                        )}
+
 
                         {
                             token
@@ -51,7 +83,6 @@ const NavBar = () => {
                                 <div className="hidden sm:flex items-center gap-2 group relative cursor-pointer">
                                     <img className="w-8 sm:w-[4vmin] cursor-pointer" src={assets.avatar} alt="Profile" />
                                     <img className="w-8 sm:w-[4vmin] cursor-pointer" src={assets.arrows} alt="Dropdown" />
-
                                     {/* Dropdown menu */}
                                     <div className='absolute top-0 right-0 pt-14 hidden group-hover:block'>
                                         <div className="min-w-[150px] max-h-[200px] bg-stone-50 ">
@@ -85,16 +116,12 @@ const NavBar = () => {
                         <NavLink to="/contact" onClick={navBarToggle}>
                             <li className='hover:text-black'>Contact Us</li>
                         </NavLink>
-                        {
-                            token ?
-                                <>
-                                    <NavLink to="/my-profile" onClick={navBarToggle}>
-                                        <li className='hover:text-black'>Profile</li>
-                                    </NavLink>
-                                    <p onClick={()=>{setToken(false); navBarToggle()}} className='hover:text-black'>Logout</p>
-                                </>
-                            : ''
-                        }
+
+                        <NavLink to="/my-profile" onClick={navBarToggle}>
+                            <li className='hover:text-black'>Profile</li>
+                        </NavLink>
+                        <p onClick={() => handleLogout} className='hover:text-black'>Logout</p>
+
                     </ul>
                 </div>
 
