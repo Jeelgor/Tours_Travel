@@ -1,24 +1,108 @@
 import { React, Image, useContext } from 'react';
 import { useEffect, useState } from 'react';
+import { React, useContext, useState, useEffect, useMemo } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
 import bannerimg from "../assets/banner.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 
 const TourPackages = () => {
     const { formData } = useContext(AppContext);
     const [getData, setgetData] = useState();
+    const [getData, setGetData] = useState([]);
     const navigate = useNavigate();
-    useEffect(() => {
-        axios.get("http://localhost:3000/Auth/users/getTourPackages", {
+    const { formData, setFormData, packageDetails, allPackages } = useContext(AppContext);
 
-        }).then((result) => {
-            setgetData(result.data);
-        })
-    })
+    // Local state for form data (separate from context data)
+    const [localFormData, setLocalFormData] = useState({
+        fromCity: '',
+        toCity: '',
+        departureDate: '',
+        guests: 1
+    });
+
+    const { packageType } = useParams()
+    const [selectedPackageType, setSelectedPackageType] = useState(packageType);
+    useEffect(() => {
+        setSelectedPackageType(packageType);
+    }, [packageType]);
+
+    const applyFilter = () => {
+        if (selectedPackageType) {
+            const filteredIds = packageDetails
+                .filter(detail => detail.packageType === selectedPackageType)
+                .map(detail => detail._id);
+
+            return allPackages.filter(pkg => filteredIds.includes(pkg._id));
+        } else {
+            return allPackages;
+        }
+    };
+
+    const filteredPackages = useMemo(applyFilter, [selectedPackageType, allPackages, packageDetails]);
+
+    const handleTabClick = (newPackageType) => {
+        if (newPackageType === selectedPackageType) {
+            setSelectedPackageType(null);
+            navigate("/TourPackages");
+        } else {
+            setSelectedPackageType(newPackageType);
+            navigate(`/TourPackages/${newPackageType}`);
+        }
+    };
+
+    const today = new Date();
+    const oneMonthLater = new Date(today);
+    oneMonthLater.setMonth(today.getMonth() + 1);
+    const formattedToday = today.toISOString().split('T')[0];
+    const formattedNextMonth = oneMonthLater.toISOString().split('T')[0];
+
+    useEffect(() => {
+        setLocalFormData({
+            fromCity: formData.fromCity || '',
+            toCity: formData.toCity || '',
+            departureDate: formData.departureDate || '',
+            guests: formData.guests || 1,
+        });
+
+        axios.get("http://localhost:3000/Auth/users/getTourPackages")
+            .then((result) => {
+                setGetData(result.data);
+            });
+    }, [formData]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "guests") {
+            const guestsValue = value.trim();
+            // Allow guests input to be blank or within 1-10 range while typing
+            if (guestsValue === "" || (guestsValue >= 1 && guestsValue <= 10)) {
+                setLocalFormData((prevData) => ({
+                    ...prevData,
+                    guests: guestsValue === "" ? "" : parseInt(guestsValue),
+                }));
+            }
+        } else {
+            setLocalFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
+
+    const handleSearchClick = () => {
+        // Validate guests field on search click, set to 1 if out of range or blank
+        const guests = localFormData.guests;
+        const validatedGuests = guests === "" || guests < 1 || guests > 10 ? 1 : guests;
+
+        // Update context with validated form data
+        setFormData({ ...localFormData, guests: validatedGuests });
+    };
+
     return (
         <>
             {/* Search Section */}
@@ -28,6 +112,9 @@ const TourPackages = () => {
                         <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
                         <input
                             type="text"
+                            name="fromCity"
+                            value={localFormData.fromCity}
+                            onChange={handleInputChange}
                             placeholder="From City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                             value={formData.fromCity}
@@ -38,6 +125,9 @@ const TourPackages = () => {
                         <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
                         <input
                             type="text"
+                            name="toCity"
+                            value={localFormData.toCity}
+                            onChange={handleInputChange}
                             placeholder="To City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                             value={formData.toCity}
@@ -49,6 +139,11 @@ const TourPackages = () => {
                         <SlCalender className='text-Darkblue w-[24px] h-[24px]' />
                         <input
                             type="date"
+                            name="departureDate"
+                            min={formattedToday}
+                            max={formattedNextMonth}
+                            value={localFormData.departureDate}
+                            onChange={handleInputChange}
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                             value={formData.departureDate}
 
@@ -59,26 +154,29 @@ const TourPackages = () => {
                         <GoPeople className='text-Darkblue w-[24px] h-[24px]' />
                         <input
                             type="number"
+                            name="guests"
+                            value={localFormData.guests}
+                            onChange={handleInputChange}
                             placeholder="People"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                             value={formData.guests}
                         />
                     </div>
                     <div className='w-[200px] h-[41px]'>
-                        <button className='w-full h-full rounded-lg border-2 border-Skyblue bg-Skyblue text-white text-2xl text-center transform transition duration-150 ease-out hover:scale-105 hover:shadow-lg'>
+                        <button onClick={handleSearchClick} className='w-full h-full rounded-lg border-2 border-Skyblue bg-Skyblue text-white text-2xl text-center transform transition duration-150 ease-out hover:scale-105 hover:shadow-lg'>
                             Search
                         </button>
                     </div>
                 </div>
             </div>
-
+            {/* Packages Section */}
             <section className='relative'>
                 <div>
                     <img src={bannerimg} alt="Banner" className="w-full h-auto" />
                 </div>
 
                 <div className='top-[70px] left-[100px] absolute'>
-                    <h2 className='text-white text-3xl font-bold'>Singapore Packages</h2>
+                    <h2 className='text-white text-3xl font-bold'>{formData.toCity && `${formData.toCity} Packages`}</h2>
                 </div>
 
                 <div className='absolute top-[240px] left-0 right-0 flex flex-col md:flex-row md:space-x-4 items-start z-10 px-4'>
@@ -135,35 +233,38 @@ const TourPackages = () => {
 
                     {/* Packages Section */}
                     <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
-                        <div className='flex justify-around items-center'>
-                            <p className='text-lg font-semibold'>ALL PACKAGES (66)</p>
-                            <p className='text-lg font-semibold'>Best Value</p>
-                            <p className='text-lg font-semibold'>Popular</p>
-                            <p className='text-lg font-semibold'>Luxury</p>
-                        </div>
+                        <ul className='flex justify-around items-center'>
+                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
+                                }`}>GROUP TOURS</li>
+                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
+                                }`}>CRUISE PACKAGES</li>
+                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
+                                }`}>FAMILY SPECIALS</li>
+                        </ul>
                     </div>
                 </div>
-                <div className='ml-72'>
-                    <div className='mt-32 text-center'>
-                        <h2 className={`text-xl lg:text-2xl md:text-2xl font-bold text-gray-800 mb-4`}>TOP PACKAGES</h2>
-                        <hr className='border-none outline-none w-28 h-0.5 mx-auto bg-gray-500' />
-                    </div>
+                <div className='ml-72 relative z-10 mb-8'>
                     <div className="container mx-auto px-4 mt-14">
                         {/* Conditional Rendering: If topPackages exists and has items, show the grid, otherwise show centered text */}
-                        {getData && getData.length > 0 ? (
+                        {filteredPackages && filteredPackages.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                {getData.map((item) => (
+                                {filteredPackages.map((item) => (
                                     <div
                                         key={item._id}
-                                        onClick={() => navigate(`/package-detail/${item._id}`)}
+                                        onClick={() => navigate(`/TourPackages-detail/${item._id}`)}
                                         className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
                                     >
                                         {/* Image */}
-                                        <img
-                                            src={`http://localhost:3000/${item.imageurl.replace(/\\/g, "/")}`} // Correct the path and prepend server URL
-                                            alt={item.title}
-                                            className="w-full h-48 object-cover"
-                                        />
+                                        {item.image ? (
+                                            <img
+                                                src={item.image}
+                                                // src={`http://localhost:3000/${item.imageurl.replace(/\\/g, "/")}`}
+                                                alt={item.title}
+                                                className="w-full h-48 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-48 bg-gray-200"></div>
+                                        )}
 
 
                                         {/* Card Content */}
@@ -211,9 +312,9 @@ const TourPackages = () => {
                         )}
                     </div>
                 </div>
+
             </section>
         </>
     );
 };
-
 export default TourPackages;

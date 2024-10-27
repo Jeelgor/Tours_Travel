@@ -107,7 +107,7 @@ const NavBar = () => {
                         <NavLink to="/homepage" onClick={navBarToggle}>
                             <li className='hover:text-black'>Home</li>
                         </NavLink>
-                        <NavLink to="/package" onClick={navBarToggle}>
+                        <NavLink to="/TourPackages" onClick={navBarToggle}>
                             <li className='hover:text-black'>All Packages</li>
                         </NavLink>
                         <NavLink to="/about" onClick={navBarToggle}>
