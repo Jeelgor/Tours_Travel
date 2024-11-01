@@ -1,4 +1,6 @@
-import { React, useContext, useState, useEffect, useMemo } from 'react';
+import { React, Image, useContext } from 'react';
+import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
@@ -8,6 +10,8 @@ import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 
 const TourPackages = () => {
+    // const { formData } = useContext(AppContext);
+    // const [getData, setgetData] = useState();
     const [getData, setGetData] = useState([]);
     const navigate = useNavigate();
     const { formData, setFormData, packageDetails, allPackages } = useContext(AppContext);
@@ -125,6 +129,7 @@ const TourPackages = () => {
                             onChange={handleInputChange}
                             placeholder="To City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+
                         />
                     </div>
 
@@ -138,6 +143,7 @@ const TourPackages = () => {
                             value={localFormData.departureDate}
                             onChange={handleInputChange}
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
+
                         />
                     </div>
 
@@ -224,15 +230,12 @@ const TourPackages = () => {
                     {/* Packages Section */}
                     <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
                         <ul className='flex justify-around items-center'>
-                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
-        }`}>GROUP TOURS</li>
-                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
-        }`}>CRUISE PACKAGES</li>
-                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
-        }`}>FAMILY SPECIALS</li>
+                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
+                                }`}>GROUP TOURS</li>
+                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
+                                }`}>CRUISE PACKAGES</li>
+                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
+                                }`}>FAMILY SPECIALS</li>
                         </ul>
                     </div>
                 </div>
