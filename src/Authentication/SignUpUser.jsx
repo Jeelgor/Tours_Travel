@@ -26,11 +26,9 @@ const SignUpUser = () => {
             Email,
             Password,
             SetPassword
-
         })
             .then(result => {
                 console.log(result);
-                localStorage.setItem("authToken", result.data.token);
                 toast.success("Thank you for registering!"); // Show success toast after registration
             })
             .catch(err => {
