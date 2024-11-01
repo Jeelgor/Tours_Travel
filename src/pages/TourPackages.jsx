@@ -1,6 +1,6 @@
 import { React, Image, useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { React, useContext, useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
@@ -10,8 +10,8 @@ import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 
 const TourPackages = () => {
-    const { formData } = useContext(AppContext);
-    const [getData, setgetData] = useState();
+    // const { formData } = useContext(AppContext);
+    // const [getData, setgetData] = useState();
     const [getData, setGetData] = useState([]);
     const navigate = useNavigate();
     const { formData, setFormData, packageDetails, allPackages } = useContext(AppContext);
@@ -117,7 +117,6 @@ const TourPackages = () => {
                             onChange={handleInputChange}
                             placeholder="From City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                            value={formData.fromCity}
                         />
                     </div>
 
@@ -130,7 +129,6 @@ const TourPackages = () => {
                             onChange={handleInputChange}
                             placeholder="To City"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                            value={formData.toCity}
 
                         />
                     </div>
@@ -145,7 +143,6 @@ const TourPackages = () => {
                             value={localFormData.departureDate}
                             onChange={handleInputChange}
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                            value={formData.departureDate}
 
                         />
                     </div>
@@ -159,7 +156,6 @@ const TourPackages = () => {
                             onChange={handleInputChange}
                             placeholder="People"
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                            value={formData.guests}
                         />
                     </div>
                     <div className='w-[200px] h-[41px]'>
