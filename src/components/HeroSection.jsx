@@ -8,14 +8,14 @@ const HeroSection = () => {
 
   const navigate = useNavigate();
   // Access AppContext
-  const { formData, setFormData } = useContext(AppContext);
+  const {formData, setFormData } = useContext(AppContext);
 
   const today = new Date();
   const oneMonthLater = new Date(today.setMonth(today.getMonth() + 1));
-
+  
   const formattedToday = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-  const formattedNextMonth = oneMonthLater.toISOString().split('T')[0];
-
+  const formattedNextMonth = oneMonthLater.toISOString().split('T')[0]; 
+    
 
   const [formState, setFormState] = useState({
     fromCity: formData.fromCity || '',
@@ -28,47 +28,40 @@ const HeroSection = () => {
     setFormState(formData);  // Load formData from context on mount
   }, [formData]);
 
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+// Handle form input changes
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    if (name === 'guests') {
-      const guestsValue = value.trim();
+  if (name === 'guests') {
+    const guestsValue = value.trim();
 
-      // Allow guests input to be blank or within 1-10 range while typing
-      if (guestsValue === "" || (guestsValue >= 1 && guestsValue <= 10)) {
-        setFormState({
-          ...formState,
-          [name]: guestsValue === "" ? "" : parseInt(guestsValue),
-        });
-      }
-    } else {
+    // Allow guests input to be blank or within 1-10 range while typing
+    if (guestsValue === "" || (guestsValue >= 1 && guestsValue <= 10)) {
       setFormState({
         ...formState,
-        [name]: value,
+        [name]: guestsValue === "" ? "" : parseInt(guestsValue),
       });
     }
-  };
+  } else {
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
+  }
+};
 
-  // Handle form submission
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Update the context with form data
-  //   setFormData(formState);
-  //   navigate('/TourPackages');
-  // };
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
+// Handle form submission
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Set guests to 1 if it’s blank or out of the 1-10 range on submission
-    const guests = formState.guests;
-    const validatedGuests = guests === "" || guests < 1 || guests > 10 ? 1 : guests;
+  // Set guests to 1 if it’s blank or out of the 1-10 range on submission
+  const guests = formState.guests;
+  const validatedGuests = guests === "" || guests < 1 || guests > 10 ? 1 : guests;
 
-    // Update the context with validated form data
-    setFormData({ ...formState, guests: validatedGuests });
-    navigate('/TourPackages');
-  };
+  // Update the context with validated form data
+  setFormData({ ...formState, guests: validatedGuests });
+  navigate('/TourPackages');
+};
 
 
   // // Handle form submission
@@ -82,6 +75,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative w-full rounded-xl overflow-hidden">
+      {/* Background Image - Visible only on screens 640px and above */}
       <div className="absolute inset-0 overflow-hidden hidden sm:block ">
         <img
           src={assets.singapore.singapore4}
