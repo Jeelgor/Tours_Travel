@@ -10,8 +10,9 @@ const ProtectedRoute = ({ children }) => {
             if (!token) {
                 navigate('/'); // Redirect to login/register if token is missing
             }
+            
         };
-
+           
         // Initial check on component mount
         checkAuthToken();
 

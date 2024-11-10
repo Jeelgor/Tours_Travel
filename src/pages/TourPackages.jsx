@@ -224,15 +224,12 @@ const TourPackages = () => {
                     {/* Packages Section */}
                     <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
                         <ul className='flex justify-around items-center'>
-                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
-        }`}>GROUP TOURS</li>
-                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
-        }`}>CRUISE PACKAGES</li>
-                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
-        }`}>FAMILY SPECIALS</li>
+                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
+                                }`}>GROUP TOURS</li>
+                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
+                                }`}>CRUISE PACKAGES</li>
+                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
+                                }`}>FAMILY SPECIALS</li>
                         </ul>
                     </div>
                 </div>
@@ -244,7 +241,9 @@ const TourPackages = () => {
                                 {filteredPackages.map((item) => (
                                     <div
                                         key={item._id}
-                                        onClick={() => navigate(`/TourPackages-detail/${item._id}`)}
+                                        onClick={() => {
+                                            navigate(`/package-detail/${item._id}`, { state: { price: item.price } }); // Correctly passing the state
+                                        }}
                                         className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
                                     >
                                         {/* Image */}

@@ -28,8 +28,16 @@ const NavBar = () => {
                         }
                     });
                     SetEmail(response.data);
+                    const dataVerify = response.data;
+                    console.log(dataVerify)
+                    if (dataVerify.data == 'Token Expired') {
+                        token("Your Token is Expired ")
+                        navigate("/")
+                    }
                 } catch (error) {
                     console.error("Error fetching user data:", error);
+                    localStorage.removeItem("authToken");
+                    navigate("/")
                 }
             }
         };
