@@ -10,7 +10,7 @@ import { AppContext } from '../context/AppContext';
 const TourPackages = () => {
     const [getData, setGetData] = useState([]);
     const navigate = useNavigate();
-    const { formData, setFormData, packageDetails, allPackages } = useContext(AppContext);
+    const { formData, setFormData, packageDetails, allPackages , searchTriggered, setSearchTriggered } = useContext(AppContext);
 
     // Local state for form data (separate from context data)
     const [localFormData, setLocalFormData] = useState({
@@ -26,19 +26,54 @@ const TourPackages = () => {
         setSelectedPackageType(packageType);
     }, [packageType]);
 
+    const [selectedDurations, setSelectedDurations] = useState([]);
+    const [selectedRatings, setSelectedRatings] = useState([]);
+    
     const applyFilter = () => {
+        let filtered = allPackages;
+
         if (selectedPackageType) {
             const filteredIds = packageDetails
                 .filter(detail => detail.packageType === selectedPackageType)
                 .map(detail => detail._id);
-
-            return allPackages.filter(pkg => filteredIds.includes(pkg._id));
-        } else {
-            return allPackages;
+            filtered = filtered.filter(pkg => filteredIds.includes(pkg._id));
         }
+
+        // Filter by selected durations
+        if (selectedDurations.length > 0) {
+            filtered = filtered.filter(pkg => {
+                // Assuming the package title or description contains the duration info
+                return selectedDurations.some(duration => pkg.location.includes(duration));
+            });
+        }
+
+        if (selectedRatings.length > 0) {
+            filtered = filtered.filter(pkg => {
+                return selectedRatings.some(range => {
+                    const [min, max] = range.includes('+') ? [9, null] : range.split('-').map(Number);
+                    return pkg.rating >= min && (max === null ? pkg.rating >= min : pkg.rating < max);
+                });
+            });
+        }
+     // Apply filter by toCity only if search was triggered or user is typing in toCity input
+     if (searchTriggered || localFormData.toCity.trim() !== "") {
+        filtered = filtered.filter(pkg =>
+            pkg.title.toLowerCase().includes(localFormData.toCity.toLowerCase())
+        );
+    }
+
+        return filtered;
     };
 
-    const filteredPackages = useMemo(applyFilter, [selectedPackageType, allPackages, packageDetails]);
+
+    const filteredPackages = useMemo(applyFilter, [selectedPackageType, allPackages, packageDetails, selectedDurations, selectedRatings, searchTriggered, localFormData.toCity]);
+
+    // Reset `searchTriggered` after applying filters once
+    useEffect(() => {
+        if (searchTriggered) {
+            setSearchTriggered(false);
+        }
+    }, [searchTriggered, setSearchTriggered]);
 
     const handleTabClick = (newPackageType) => {
         if (newPackageType === selectedPackageType) {
@@ -87,6 +122,10 @@ const TourPackages = () => {
                 ...prevData,
                 [name]: value,
             }));
+            // Reset searchTriggered whenever the user types in toCity
+            if (name === "toCity") {
+                setSearchTriggered(false); // Prevent filter from being applied continuously
+            }
         }
     };
 
@@ -97,8 +136,31 @@ const TourPackages = () => {
 
         // Update context with validated form data
         setFormData({ ...localFormData, guests: validatedGuests });
+
+        // Trigger search
+        setSearchTriggered(true);
     };
 
+    const handleDurationChange = (duration) => {
+        setSelectedDurations((prev) => {
+            if (prev.includes(duration)) {
+                return prev.filter((d) => d !== duration);
+            } else {
+                return [...prev, duration];
+            }
+        });
+    };
+
+    const handleRatingChange = (range) => {
+        const rangeKey = range[0] === 9 ? '9+' : `${range[0]}-${range[1]}`;
+        setSelectedRatings((prev) => {
+            if (prev.includes(rangeKey)) {
+                return prev.filter((r) => r !== rangeKey);
+            } else {
+                return [...prev, rangeKey];
+            }
+        });
+    };
     return (
         <>
             {/* Search Section */}
@@ -115,7 +177,6 @@ const TourPackages = () => {
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                         />
                     </div>
-
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
                         <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
                         <input
@@ -166,7 +227,7 @@ const TourPackages = () => {
                 </div>
 
                 <div className='top-[70px] left-[100px] absolute'>
-                    <h2 className='text-white text-3xl font-bold'>{formData.toCity && `${formData.toCity} Packages`}</h2>
+                    <h2 className='text-white text-3xl font-bold'>{formData.toCity ? `${formData.toCity} Packages` : `All Packages`}</h2>
                 </div>
 
                 <div className='absolute top-[240px] left-0 right-0 flex flex-col md:flex-row md:space-x-4 items-start z-10 px-4'>
@@ -177,46 +238,79 @@ const TourPackages = () => {
 
                         <div className='mt-5 space-y-3'>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="4N" />
+                                <input type="checkbox" id="3N" checked={selectedDurations.includes("3N")}
+                                    onChange={() => handleDurationChange("3N")} />
+                                <label htmlFor="3N" className='pl-2'>3N</label>
+                            </div>
+                            <div className='flex items-center'>
+                                <input type="checkbox" id="4N" checked={selectedDurations.includes("4N")}
+                                    onChange={() => handleDurationChange("4N")} />
                                 <label htmlFor="4N" className='pl-2'>4N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="5N" />
+                                <input type="checkbox" id="5N" checked={selectedDurations.includes("5N")}
+                                    onChange={() => handleDurationChange("5N")} />
                                 <label htmlFor="5N" className='pl-2'>5N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="6N" />
+                                <input type="checkbox" id="6N" checked={selectedDurations.includes("6N")}
+                                    onChange={() => handleDurationChange("6N")} />
                                 <label htmlFor="6N" className='pl-2'>6N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="7N" />
+                                <input type="checkbox" id="7N" checked={selectedDurations.includes("7N")}
+                                    onChange={() => handleDurationChange("7N")} />
                                 <label htmlFor="7N" className='pl-2'>7N</label>
                             </div>
                         </div>
                         <div className='mt-5 space-y-3'>
                             <div className='flex items-center'>
-
-                                <h2 className='font-bold text-2xl'>Popular Filter</h2>
+                                <h2 className='font-bold text-xl'>Rating</h2>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="5N" />
-                                <label htmlFor="5N" className='pl-2'>Pool</label>
+                                <input
+                                    type="checkbox"
+                                    id="rating9andAbove"
+                                    onChange={() => handleRatingChange([9, 10])}
+                                    checked={selectedRatings.includes('9+')}
+                                />
+                                <label htmlFor="rating9andAbove" className='pl-2'>9 and above</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="6N" />
-                                <label htmlFor="6N" className='pl-2'>Breakfast Included</label>
+                                <input
+                                    type="checkbox"
+                                    id="rating8to9"
+                                    onChange={() => handleRatingChange([8, 9])}
+                                    checked={selectedRatings.includes('8-9')}
+                                />
+                                <label htmlFor="rating8to9" className='pl-2'>8 to 9</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="7N" />
-                                <label htmlFor="7N" className='pl-2'>Hotel</label>
+                                <input
+                                    type="checkbox"
+                                    id="rating7to8"
+                                    onChange={() => handleRatingChange([7, 8])}
+                                    checked={selectedRatings.includes('7-8')}
+                                />
+                                <label htmlFor="rating7to8" className='pl-2'>7 to 8</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="7N" />
-                                <label htmlFor="7N" className='pl-2'>Wi-Fi included</label>
+                                <input
+                                    type="checkbox"
+                                    id="rating6to7"
+                                    onChange={() => handleRatingChange([6, 7])}
+                                    checked={selectedRatings.includes('6-7')}
+                                />
+                                <label htmlFor="rating6to7" className='pl-2'>6 to 7</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="7N" />
-                                <label htmlFor="7N" className='pl-2'>Resort</label>
+                                <input
+                                    type="checkbox"
+                                    id="rating5to6"
+                                    onChange={() => handleRatingChange([5, 6])}
+                                    checked={selectedRatings.includes('5-6')}
+                                />
+                                <label htmlFor="rating5to6" className='pl-2'>5 to 6</label>
                             </div>
                         </div>
                     </div>
@@ -224,15 +318,12 @@ const TourPackages = () => {
                     {/* Packages Section */}
                     <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
                         <ul className='flex justify-around items-center'>
-                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
-        }`}>GROUP TOURS</li>
-                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
-        }`}>CRUISE PACKAGES</li>
-                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${
-          selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
-        }`}>FAMILY SPECIALS</li>
+                            <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
+                                }`}>GROUP TOURS</li>
+                            <li onClick={() => { handleTabClick("Cruise Packages") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"
+                                }`}>CRUISE PACKAGES</li>
+                            <li onClick={() => { handleTabClick("Family Specials") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"
+                                }`}>FAMILY SPECIALS</li>
                         </ul>
                     </div>
                 </div>
@@ -297,15 +388,14 @@ const TourPackages = () => {
                             </div>
                         ) : (
                             // Centered text when no packages are available
-                            <div className="flex justify-center items-center w-full h-32">
-                                <p className="text-center w-full text-lg sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
+                            <div className="flex justify-center items-start py-28 w-full h-96 mb-28">
+                                <p className="flex justify-center text-center w-full text-lg sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
                                     There Is Not Top Package Available Right Now
                                 </p>
                             </div>
                         )}
                     </div>
                 </div>
-
             </section>
         </>
     );

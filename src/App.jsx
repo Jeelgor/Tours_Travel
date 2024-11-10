@@ -51,6 +51,7 @@ function MainContent() {
           <Route path="/my-package" element={<MyPackage />} />
           <Route path="/Homepagedata" element={<HomPageData />} />
           <Route path="/TourPackages/:packageType" element={<TourPackages />} />
+          <Route path="/TourPackages/:duration" element={<TourPackages />} />
           <Route path="/TourPackages-detail/:pkgId" element={<PackageDetail />} />
           <Route path="/AddPackages" element={<AddPackages />} />
         </Routes>

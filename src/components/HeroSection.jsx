@@ -8,7 +8,7 @@ const HeroSection = () => {
 
   const navigate = useNavigate();
   // Access AppContext
-  const {formData, setFormData } = useContext(AppContext);
+  const {formData, setFormData ,setSearchTriggered} = useContext(AppContext);
 
   const today = new Date();
   const oneMonthLater = new Date(today.setMonth(today.getMonth() + 1));
@@ -60,18 +60,9 @@ const handleSubmit = (e) => {
 
   // Update the context with validated form data
   setFormData({ ...formState, guests: validatedGuests });
+  setSearchTriggered(true);
   navigate('/TourPackages');
 };
-
-
-  // // Handle form submission
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Update the context with form data
-  //   setFormData(formState);
-  //   navigate('/TourPackages');
-  //   // Add navigation or any other action after form submission
-  // };
 
   return (
     <section className="relative w-full rounded-xl overflow-hidden">
