@@ -63,6 +63,11 @@ function MainContent() {
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
           <Route path="/BookingForm" element={<BookingForm />} />
           <Route path="/userbookingstatus" element={<UserBookingStatus />} />
+          <Route path="/Homepagedata" element={<HomPageData />} />
+          <Route path="/TourPackages/:packageType" element={<TourPackages />} />
+          <Route path="/TourPackages/:duration" element={<TourPackages />} />
+          <Route path="/TourPackages-detail/:pkgId" element={<PackageDetail />} />
+
           {/* <Route path="/Homepagedata" element={<HomPageData />} /> */}
           {/* <Route path="/package" element={<Package />} /> */}
           {/* <Route path="/package/:package-speciality" element={<Package />} /> */}

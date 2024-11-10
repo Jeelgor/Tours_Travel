@@ -29,6 +29,7 @@ export const AppProvider = ({ children }) => {
   const [topPackages, setTopPackages] = useState(_TopPackages);
   const [allPackages, setAllPackages] = useState(_AllPackages);
   const [packageDetails, setPackageDetails] = useState(_PackageDetails);
+  const [searchTriggered, setSearchTriggered] = useState(false);
 
   // Sync formData with localStorage whenever it changes
   useEffect(() => {
@@ -36,7 +37,7 @@ export const AppProvider = ({ children }) => {
   }, [formData]);
 
   return (
-    <AppContext.Provider value={{ formData, setFormData ,topPackages,packageDetails,allPackages}}>
+    <AppContext.Provider value={{ formData, setFormData ,topPackages,packageDetails,allPackages, searchTriggered, setSearchTriggered }}>
       {children}
     </AppContext.Provider>
   );
