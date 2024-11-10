@@ -9,7 +9,7 @@ const UserBookingStatus = () => {
         async function fetchBookings() {
             try {
                 const result = await axios.get("http://localhost:3000/api/bookings");
-                const result2 = await axios.get("http://localhost:3000/api/");
+                // const result2 = await axios.get("http://localhost:3000/api/");
 
                 // Log the API response to verify the data structure
                 console.log("API Response:", result.data);
