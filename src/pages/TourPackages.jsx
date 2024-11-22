@@ -11,6 +11,8 @@ const TourPackages = () => {
     const [getData, setGetData] = useState([]);
     const navigate = useNavigate();
     const { formData, setFormData, packageDetails, allPackages } = useContext(AppContext);
+
+    // Local state for form data (separate from context data)
     const [localFormData, setLocalFormData] = useState({
         fromCity: '',
         toCity: '',
@@ -18,57 +20,25 @@ const TourPackages = () => {
         guests: 1
     });
 
-    const { packageType } = useParams();
+    const { packageType } = useParams()
     const [selectedPackageType, setSelectedPackageType] = useState(packageType);
     useEffect(() => {
         setSelectedPackageType(packageType);
     }, [packageType]);
 
-    const [selectedDurations, setSelectedDurations] = useState([]);
-    const [selectedRatings, setSelectedRatings] = useState([]);
-    const [searchTriggered, setSearchTriggered] = useState(false);
-
     const applyFilter = () => {
-        let filtered = allPackages;
-
-        // Package Type Filter
         if (selectedPackageType) {
             const filteredIds = packageDetails
                 .filter(detail => detail.packageType === selectedPackageType)
                 .map(detail => detail._id);
-            filtered = filtered.filter(pkg => filteredIds.includes(pkg._id));
-        }
 
-        // Duration Filter
-        if (selectedDurations.length > 0) {
-            filtered = filtered.filter(pkg => {
-                return selectedDurations.some(duration => pkg.location.includes(duration));
-            });
+            return allPackages.filter(pkg => filteredIds.includes(pkg._id));
+        } else {
+            return allPackages;
         }
-
-        // Rating Filter
-        if (selectedRatings.length > 0) {
-            filtered = filtered.filter(pkg => {
-                return selectedRatings.some(range => {
-                    const [min, max] = range.includes('+') ? [9, null] : range.split('-').map(Number);
-                    return pkg.rating >= min && (max === null ? pkg.rating >= min : pkg.rating < max);
-                });
-            });
-        }
-
-        // Search Filter
-        if (searchTriggered) {
-            if (localFormData.toCity.trim() !== "") {
-                filtered = filtered.filter(pkg =>
-                    pkg.title.toLowerCase().includes(localFormData.toCity.toLowerCase())
-                );
-            }
-        }
-
-        return filtered;
     };
 
-    const filteredPackages = useMemo(applyFilter, [selectedPackageType, allPackages, packageDetails, selectedDurations, selectedRatings, searchTriggered, localFormData.toCity]);
+    const filteredPackages = useMemo(applyFilter, [selectedPackageType, allPackages, packageDetails]);
 
     const handleTabClick = (newPackageType) => {
         if (newPackageType === selectedPackageType) {
@@ -105,6 +75,7 @@ const TourPackages = () => {
 
         if (name === "guests") {
             const guestsValue = value.trim();
+            // Allow guests input to be blank or within 1-10 range while typing
             if (guestsValue === "" || (guestsValue >= 1 && guestsValue <= 10)) {
                 setLocalFormData((prevData) => ({
                     ...prevData,
@@ -116,46 +87,21 @@ const TourPackages = () => {
                 ...prevData,
                 [name]: value,
             }));
-            if (name === "toCity") {
-                setSearchTriggered(false);
-            }
         }
     };
 
     const handleSearchClick = () => {
+        // Validate guests field on search click, set to 1 if out of range or blank
         const guests = localFormData.guests;
         const validatedGuests = guests === "" || guests < 1 || guests > 10 ? 1 : guests;
 
+        // Update context with validated form data
         setFormData({ ...localFormData, guests: validatedGuests });
-        setSearchTriggered(true);
     };
-
-    const handleDurationChange = (duration) => {
-        setSelectedDurations((prev) => {
-            if (prev.includes(duration)) {
-                return prev.filter((d) => d !== duration);
-            } else {
-                return [...prev, duration];
-            }
-        });
-    };
-
-    const handleRatingChange = (range) => {
-        // Convert the range to a string key for consistency
-        const rangeKey = range[0] === 9 && range[1] === 10 ? '9+' : `${range[0]}-${range[1]}`;
-
-        setSelectedRatings((prev) => {
-            if (prev.includes(rangeKey)) {
-                return prev.filter((r) => r !== rangeKey);
-            } else {
-                return [...prev, rangeKey];
-            }
-        });
-    };
-
 
     return (
         <>
+            {/* Search Section */}
             <div className='h-[87px] bg-Darkblue flex justify-center items-center'>
                 <div className='flex space-x-4'>
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
@@ -169,6 +115,7 @@ const TourPackages = () => {
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                         />
                     </div>
+
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
                         <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
                         <input
@@ -180,6 +127,7 @@ const TourPackages = () => {
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                         />
                     </div>
+
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
                         <SlCalender className='text-Darkblue w-[24px] h-[24px]' />
                         <input
@@ -192,6 +140,7 @@ const TourPackages = () => {
                             className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
                         />
                     </div>
+
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
                         <GoPeople className='text-Darkblue w-[24px] h-[24px]' />
                         <input
@@ -210,85 +159,69 @@ const TourPackages = () => {
                     </div>
                 </div>
             </div>
+            {/* Packages Section */}
             <section className='relative'>
                 <div>
                     <img src={bannerimg} alt="Banner" className="w-full h-auto" />
                 </div>
+
                 <div className='top-[70px] left-[100px] absolute'>
-                    <h2 className='text-white text-3xl font-bold'>{formData.toCity ? `${formData.toCity} Packages` : `All Packages`}</h2>
+                    <h2 className='text-white text-3xl font-bold'>{formData.toCity && `${formData.toCity} Packages`}</h2>
                 </div>
+
                 <div className='absolute top-[240px] left-0 right-0 flex flex-col md:flex-row md:space-x-4 items-start z-10 px-4'>
                     <div className='w-full md:w-[277px] bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
                         <p className='text-lg font-semibold'>Filters</p>
                         <hr className='my-4' />
                         <h2 className='text-xl font-bold'>Duration (in Nights)</h2>
+
                         <div className='mt-5 space-y-3'>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="4N" checked={selectedDurations.includes('4N')} onChange={() => handleDurationChange('4N')} />
+                                <input type="checkbox" id="4N" />
                                 <label htmlFor="4N" className='pl-2'>4N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="5N" checked={selectedDurations.includes('5N')} onChange={() => handleDurationChange('5N')} />
+                                <input type="checkbox" id="5N" />
                                 <label htmlFor="5N" className='pl-2'>5N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="6N" checked={selectedDurations.includes('6N')} onChange={() => handleDurationChange('6N')} />
+                                <input type="checkbox" id="6N" />
                                 <label htmlFor="6N" className='pl-2'>6N</label>
                             </div>
                             <div className='flex items-center'>
-                                <input type="checkbox" id="7N" checked={selectedDurations.includes('7N')} onChange={() => handleDurationChange('7N')} />
+                                <input type="checkbox" id="7N" />
                                 <label htmlFor="7N" className='pl-2'>7N</label>
                             </div>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="8N" checked={selectedDurations.includes('8N')} onChange={() => handleDurationChange('8N')} />
-                                <label htmlFor="8N" className='pl-2'>8N</label>
-                            </div>
-
-                            
-
                         </div>
-                        <hr className='my-4' />
-                        <h2 className='text-xl font-bold'>Rating</h2>
                         <div className='mt-5 space-y-3'>
                             <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="9+"
-                                    checked={selectedRatings.includes('9+')}
-                                    onChange={() => handleRatingChange([9, 10])} // Rating 9 and above
-                                />
-                                <label htmlFor="9+" className='pl-2'>9+ Rating</label>
-                            </div>
 
-                            <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="8-9"
-                                    checked={selectedRatings.includes('8-9')}
-                                    onChange={() => handleRatingChange([8, 9])} // Rating from 8 to 9
-                                />
-                                <label htmlFor="8-9" className='pl-2'>8 to 9 Stars</label>
+                                <h2 className='font-bold text-2xl'>Popular Filter</h2>
                             </div>
                             <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="7-8"
-                                    checked={selectedRatings.includes('7-8')}
-                                    onChange={() => handleRatingChange([7, 8])} // Rating from 7 to 8
-                                />
-                                <label htmlFor="7-8" className='pl-2'>7 to 8 Stars</label>
+                                <input type="checkbox" id="5N" />
+                                <label htmlFor="5N" className='pl-2'>Pool</label>
                             </div>
                             <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="6-7"
-                                    checked={selectedRatings.includes('6-7')}
-                                    onChange={() => handleRatingChange([6, 7])} // Rating from 6 to 7
-                                />
-                                <label htmlFor="6-7" className='pl-2'>6 to 7 Stars</label>
+                                <input type="checkbox" id="6N" />
+                                <label htmlFor="6N" className='pl-2'>Breakfast Included</label>
+                            </div>
+                            <div className='flex items-center'>
+                                <input type="checkbox" id="7N" />
+                                <label htmlFor="7N" className='pl-2'>Hotel</label>
+                            </div>
+                            <div className='flex items-center'>
+                                <input type="checkbox" id="7N" />
+                                <label htmlFor="7N" className='pl-2'>Wi-Fi included</label>
+                            </div>
+                            <div className='flex items-center'>
+                                <input type="checkbox" id="7N" />
+                                <label htmlFor="7N" className='pl-2'>Resort</label>
                             </div>
                         </div>
                     </div>
+
+                    {/* Packages Section */}
                     <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
                         <ul className='flex justify-around items-center'>
                             <li onClick={() => { handleTabClick("Group Tour") }} className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"
@@ -300,9 +233,7 @@ const TourPackages = () => {
                         </ul>
                     </div>
                 </div>
-            </section>
-            <section>
-                <div className='ml-72 relative z-10 mb-12'>
+                <div className='ml-72 relative z-10 mb-8'>
                     <div className="container mx-auto px-4 mt-14">
                         {/* Conditional Rendering: If topPackages exists and has items, show the grid, otherwise show centered text */}
                         {filteredPackages && filteredPackages.length > 0 ? (
@@ -365,7 +296,7 @@ const TourPackages = () => {
                             </div>
                         ) : (
                             // Centered text when no packages are available
-                            <div className="flex justify-center items-center w-full h-96 mb-28">
+                            <div className="flex justify-center items-center w-full h-32">
                                 <p className="text-center w-full text-lg sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
                                     There Is Not Top Package Available Right Now
                                 </p>
