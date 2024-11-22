@@ -9,10 +9,10 @@ const TopPackage = () => {
 
   return (
     <>
-    <div className='mt-32 text-center'>
-      <h2 className={`text-xl lg:text-2xl md:text-2xl font-bold text-gray-800 mb-4`}>TOP PACKAGES</h2>
-      <hr className='border-none outline-none w-28 h-0.5 mx-auto bg-gray-500'/>
-    </div>
+      <div className='mt-32 text-center'>
+        <h2 className={`text-xl lg:text-2xl md:text-2xl font-bold text-gray-800 mb-4`}>TOP PACKAGES</h2>
+        <hr className='border-none outline-none w-28 h-0.5 mx-auto bg-gray-500' />
+      </div>
       <div className="container mx-auto px-4 mt-14">
         {/* Conditional Rendering: If topPackages exists and has items, show the grid, otherwise show centered text */}
         {topPackages && topPackages.length > 0 ? (
@@ -20,7 +20,9 @@ const TopPackage = () => {
             {topPackages.map((item) => (
               <div
                 key={item._id}
-                onClick={() => navigate(`/TourPackages-detail/${item._id}`)}
+                onClick={() => {
+                  navigate(`/package-detail/${item._id}`, { state: { price: item.price } }); // Correctly passing the state
+                }}
                 className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
               >
                 {/* Image */}

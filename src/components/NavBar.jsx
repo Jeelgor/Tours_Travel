@@ -30,6 +30,8 @@ const NavBar = () => {
                     SetEmail(response.data);
                 } catch (error) {
                     console.error("Error fetching user data:", error);
+                    localStorage.removeItem("authToken");
+                    navigate('/login'); 
                 }
             }
         };
@@ -63,35 +65,32 @@ const NavBar = () => {
                             <li>Contact Us</li>
                             <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
                         </NavLink>
+                        <NavLink to="/userbookingstatus">
+                            <li>Your Bookings</li>
+                            <hr className='border-none outline-none h-0.5 bg-blue-600 w-3/5 mx-auto mt-1 hidden' />
+                        </NavLink>
                     </ul>
 
                     {/* profile */}
                     <div className={`flex`}>
-                        {userEmail ? (
-                            <div>
-                                <p>Logged in as: {userEmail.FirstName}</p>
-                                <p>Email: {userEmail.Email}</p>
-                            </div>
-                        ) : (
-                            <p>Please log in to see your profile.</p>
-                        )}
-
-
                         {
                             token
                                 ?
-                                <div className="hidden sm:flex items-center gap-2 group relative cursor-pointer">
+                                <div className="relative flex items-center gap-2 group cursor-pointer">
                                     <img className="w-8 sm:w-[4vmin] cursor-pointer" src={assets.avatar} alt="Profile" />
-                                    <img className="w-8 sm:w-[4vmin] cursor-pointer" src={assets.arrows} alt="Dropdown" />
+
                                     {/* Dropdown menu */}
-                                    <div className='absolute top-0 right-0 pt-14 hidden group-hover:block'>
-                                        <div className="min-w-[150px] max-h-[200px] bg-stone-50 ">
-                                            <p onClick={() => navigate('/my-profile')} className=" px-4 py-2 cursor-pointer font-semibold hover:text-black text-gray-400 ">My Profile</p>
-                                            <p onClick={() => navigate('/my-package')} className=" px-4 py-2 cursor-pointer font-semibold hover:text-black text-gray-400 ">My Packages</p>
-                                            <p onClick={() => setToken(false)} className=" px-4 py-2 cursor-pointer font-semibold hover:text-black text-gray-400 ">Logout</p>
-                                        </div>
+                                    <div className="absolute top-full right-0 mt-2 hidden group-hover:block bg-gray-800 text-white p-4 rounded-md shadow-lg">
+                                        {userEmail ? (
+                                            <div>
+                                                <p className="text-lg font-semibold">Logged in as: {userEmail.Email}</p>
+                                            </div>
+                                        ) : (
+                                            <p className="text-lg">Please log in to see your profile.</p>
+                                        )}
                                     </div>
                                 </div>
+
                                 : <div>
                                     <button onClick={() => navigate('/')} className='bg-blue-400 px-6 py-2 rounded-full text-sm text-white font-semibold '>Create Account</button>
                                 </div>

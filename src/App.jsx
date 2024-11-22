@@ -26,7 +26,7 @@ import UserBookingStatus from "./pages/UserBookingStatus";
 
 
 // Load your publishable key
-const stripePromise = loadStripe("pk_test_51QJ6lyENCwtICJmBN31R63zaU0whq0T9QqkZE6Yl0jsUbqj0AzRy0pvfhbmTlJM3IRmHmLtWZPr4k3NNwAlO1tW800HKMgrSWx");
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 function App() {
   return (
@@ -63,7 +63,7 @@ function MainContent() {
           <Route path="/my-package" element={<MyPackage />} />
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
           <Route path="/BookingForm" element={<BookingForm />} />
-          <Route path="/userbookingstatus" element={<UserBookingStatus />} />
+          <Route path="/userbookingstatus" element={<ProtectedRoute><UserBookingStatus /></ProtectedRoute>} />
           {/* <Route path="/Homepagedata" element={<HomPageData />} /> */}
           {/* <Route path="/package" element={<Package />} /> */}
           {/* <Route path="/package/:package-speciality" element={<Package />} /> */}
