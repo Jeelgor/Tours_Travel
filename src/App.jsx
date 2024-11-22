@@ -56,6 +56,7 @@ function MainContent() {
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
           <Route path="/Homepagedata" element={<HomPageData />} />
           <Route path="/TourPackages" element={<ProtectedRoute><TourPackages /></ProtectedRoute>} />
+          <Route path="/TourPackages/:packageType" element={<ProtectedRoute><TourPackages /></ProtectedRoute>} />
           <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
           <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
           <Route path="/my-profile" element={<MyProfile />} />
