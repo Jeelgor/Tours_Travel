@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
         const checkAuthToken = () => {
             const token = localStorage.getItem("authToken");
             if (!token) {
-                navigate('/'); // Redirect to login/register if token is missing
+                navigate('/');
             }
         };
 

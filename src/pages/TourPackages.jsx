@@ -242,7 +242,7 @@ const TourPackages = () => {
                                     <div
                                         key={item._id}
                                         onClick={() => {
-                                            navigate(`/package-detail/${item._id}`, { state: { price: item.price } }); // Correctly passing the state
+                                            navigate(`/package-detail/${item._id}`, { state: { price: item.price } }); 
                                         }}
                                         className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
                                     >
@@ -250,7 +250,6 @@ const TourPackages = () => {
                                         {item.image ? (
                                             <img
                                                 src={item.image}
-                                                // src={`http://localhost:3000/${item.imageurl.replace(/\\/g, "/")}`}
                                                 alt={item.title}
                                                 className="w-full h-48 object-cover"
                                             />

@@ -12,6 +12,8 @@ const PaymentPage = () => {
     const navigate = useNavigate();
     const [clientSecret, setClientSecret] = useState("");
     const [userId, setUserId] = useState("");
+    const [userEmail, SetEmail] = useState(null);
+
 
     useEffect(() => {
         // Fetch user details from the session
@@ -25,7 +27,9 @@ const PaymentPage = () => {
                     }
                 });
                 const { _id } = response.data;
+                const { Email } = response.data;
                 setUserId(_id);
+                SetEmail(Email);
             } catch (error) {
                 console.error("Error fetching user session:", error);
             }
@@ -70,6 +74,7 @@ const PaymentPage = () => {
                 try {
                     const response = await axios.post('http://localhost:3000/api/payment/save-payment', {
                         userId,
+                        userEmail,
                         paymentIntentId: paymentIntent.id,
                         amount: bookingDetails.price,
                         packageName: bookingDetails.packageName,
