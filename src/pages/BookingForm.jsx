@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+const apiUrl = import.meta.env.VITE_API_URL
 
 const BookingForm = () => {
     const location = useLocation();
@@ -37,7 +38,7 @@ const BookingForm = () => {
 
         // Sending booking data to backend with Axios
         try {
-            const response = await axios.post('http://localhost:3000/api/book', bookingDetails);
+            const response = await axios.post(`${apiUrl}/api/book`, bookingDetails);
 
             if (response.status === 200) {
                 toast.success('Booking successful! Redirecting to payment...');

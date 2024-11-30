@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import "../index.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
 import { ToastContainer, toast } from 'react-toastify';
+const apiUrl = import.meta.env.VITE_API_URL
+
 const SignUpUser = () => {
     const [FirstName, SetFirstName] = useState("");
     const [LastName, SetLastName] = useState("");
@@ -60,7 +61,7 @@ const SignUpUser = () => {
             return;
         }
 
-        axios.post('http://localhost:3000/Auth/users/register', {
+        axios.post(`${apiUrl}/Auth/users/register`, {
             FirstName,
             LastName,
             Email,

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const apiUrl = import.meta.env.VITE_API_URL
+console.log(apiUrl,111);
 const Login = () => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
