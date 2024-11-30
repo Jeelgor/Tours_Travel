@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const apiUrl = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL 
 console.log(apiUrl,111);
 const Login = () => {
     const [Email, SetEmail] = useState("");
@@ -17,7 +17,7 @@ const Login = () => {
 
         try {
             // Login request to verify credentials
-            const loginResponse = await axios.post(`${apiUrl}/Auth/users/loginuser`, {
+            const loginResponse = await axios.post(`${apiUrl}Auth/users/loginuser`, {
                 Email,
                 Password
             });
