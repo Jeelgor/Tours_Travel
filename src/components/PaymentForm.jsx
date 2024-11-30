@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const PaymentPage = () => {
     const location = useLocation();
@@ -69,7 +70,7 @@ const PaymentPage = () => {
         } else {
             if (paymentIntent.status === "succeeded") {
                 toast("Payment Successful!");
-                navigate("/status");
+                navigate("/userbookingstatus");
 
                 try {
                     const response = await axios.post('http://localhost:3000/api/payment/save-payment', {
@@ -115,7 +116,9 @@ const PaymentPage = () => {
                     </button>
                 </form>
             )}
+            <ToastContainer />
         </div>
+
     );
 };
 

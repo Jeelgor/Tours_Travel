@@ -1,22 +1,62 @@
 import React, { useState } from "react";
 import "../index.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-
+import { Link, useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
 const SignUpUser = () => {
     const [FirstName, SetFirstName] = useState("");
     const [LastName, SetLastName] = useState("");
     const [Email, SetEmail] = useState("");
     const [Password, SetuPassword] = useState("");
     const [SetPassword, SetSetPassword] = useState("");
+    const navigate = useNavigate();
 
-    const RegisterUser = (event) => {
-        event.preventDefault();
+    const validateFields = () => {
+        // Check for empty fields
+        if (!FirstName.trim() || !LastName.trim() || !Email.trim() || !Password.trim() || !SetPassword.trim()) {
+            toast.error("All fields are required");
+            return false;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(Email)) {
+            toast.error("Invalid email format");
+            return false;
+        }
+
+        // Password strength validation
+        if (Password.length < 8) {
+            toast.error("Password must be at least 8 characters long");
+            return false;
+        }
+        if (!/[A-Z]/.test(Password)) {
+            toast.error("Password must contain at least one uppercase letter");
+            return false;
+        }
+        if (!/[a-z]/.test(Password)) {
+            toast.error("Password must contain at least one lowercase letter");
+            return false;
+        }
+        if (!/[0-9]/.test(Password)) {
+            toast.error("Password must contain at least one number");
+            return false;
+        }
 
         // Check if passwords match
         if (Password !== SetPassword) {
             toast.error("Passwords do not match");
+            return false;
+        }
+
+        return true;
+    };
+
+    const RegisterUser = (event) => {
+        event.preventDefault();
+
+        if (!validateFields()) {
             return;
         }
 
@@ -29,13 +69,14 @@ const SignUpUser = () => {
         })
             .then(result => {
                 console.log(result);
-                toast.success("Thank you for registering!"); // Show success toast after registration
+                navigate("/login");
+                toast("Thank you for registering!");
             })
             .catch(err => {
                 console.error(err);
-                toast.error("Registration failed. Please try again."); // Notify user of the error
+                toast.error("Registration failed. Please try again.");
             });
-    }
+    };
 
     return (
         <div className="bg-lightblue h-screen w-screen flex items-center justify-center">
@@ -102,7 +143,9 @@ const SignUpUser = () => {
                     </Link>
                 </form>
             </div>
+            <ToastContainer />
         </div>
+
     );
 }
 

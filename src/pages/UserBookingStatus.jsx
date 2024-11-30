@@ -128,7 +128,7 @@ const UserBookingStatus = () => {
                                 <tr key={payment._id} className="hover:bg-gray-50">
                                     <td className="py-2 px-4 border-b">{payment.packageName}</td>
                                     <td className="py-2 px-4 border-b">{payment.paymentIntentId}</td>
-                                    <td className="py-2 px-4 border-b">${payment.amount}</td>
+                                    <td className="py-2 px-4 border-b">₹{payment.amount}</td>
                                     <td className="py-2 px-4 border-b">{payment.status}</td>
                                     <td className="py-2 px-4 border-b">{payment.paymentMethod}</td>
                                     <td className="py-2 px-4 border-b">{new Date(payment.paymentDate).toLocaleDateString()}</td>
