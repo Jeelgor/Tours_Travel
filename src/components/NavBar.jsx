@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { faXmark, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL
 
 const NavBar = () => {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const NavBar = () => {
             const token = localStorage.getItem("authToken");
             if (token) {
                 try {
-                    const response = await axios.get('http://localhost:3000/Auth/users/userProfile', {
+                    const response = await axios.get(`${apiUrl}/Auth/users/userProfile`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -74,10 +75,10 @@ const NavBar = () => {
                     {
                         token
                             ? <div className="relative flex items-center gap-2">
-                                <img 
-                                    className="w-8 sm:w-[4vmin] cursor-pointer" 
-                                    src={assets.avatar} 
-                                    alt="Profile" 
+                                <img
+                                    className="w-8 sm:w-[4vmin] cursor-pointer"
+                                    src={assets.avatar}
+                                    alt="Profile"
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown visibility
                                 />
 
