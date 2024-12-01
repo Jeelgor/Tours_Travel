@@ -53,7 +53,7 @@ function MainContent() {
           <Route path="/" element={<SignUpUser />} />
           <Route path="/login" element={<Login />} />
           <Route path="/OtpVerification" element={<OtpVerification />} />
-          <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+          <Route path="/homepage" element={<Homepage />} />
           <Route path="/Homepagedata" element={<HomPageData />} />
           <Route path="/TourPackages" element={<ProtectedRoute><TourPackages /></ProtectedRoute>} />
           <Route path="/TourPackages/:packageType" element={<ProtectedRoute><TourPackages /></ProtectedRoute>} />

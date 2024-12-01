@@ -6,6 +6,7 @@ import bannerimg from "../assets/banner.png";
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
+const apiUrl = import.meta.env.VITE_API_URL 
 
 const TourPackages = () => {
     const [getData, setGetData] = useState([]);
@@ -94,7 +95,7 @@ const TourPackages = () => {
             guests: formData.guests || 1,
         });
 
-        axios.get("http://localhost:3000/Auth/users/getTourPackages")
+        axios.get(`${apiUrl}/Auth/users/getTourPackages`)
             .then((result) => {
                 setGetData(result.data);
             });
