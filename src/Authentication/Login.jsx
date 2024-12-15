@@ -17,7 +17,7 @@ const Login = () => {
 
         try {
             // Login request to verify credentials
-            const loginResponse = await axios.post(`${apiUrl}Auth/users/loginuser`, {
+            const loginResponse = await axios.post(`${apiUrl}/Auth/users/loginuser`, {
                 Email,
                 Password
             });
