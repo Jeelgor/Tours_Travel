@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+const apiUrl = import.meta.env.VITE_API_URL
 
 const OtpVerification = () => {
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ const OtpVerification = () => {
         const otpString = otp.join('');
 
         // API call for OTP verification
-        axios.post("http://localhost:3000/Auth/users/verify-Otp", { otp: otpString })
+        axios.post(`${apiUrl}Auth/users/verify-Otp`, { otp: otpString })
             .then(result => {
                 console.log(result); // Verify this log appears
                 toast("OTP verified successfully!");

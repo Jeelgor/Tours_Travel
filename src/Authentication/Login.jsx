@@ -30,9 +30,7 @@ const Login = () => {
                 // Save token in localStorage
                 localStorage.setItem("authToken", token);
 
-                // Optionally navigate to OTP page
-                navigate('/OtpVerification'); // Uncomment if you want redirection
-
+                navigate('/OtpVerification'); 
                 // Check protected route as a test
                 accessProtectedRoute();
             } else {
