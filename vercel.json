@@ -1,6 +1,12 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/" }
-    ]
+  "rewrites": [
+    {
+      "source": "/Auth/users/:path*", 
+      "destination": "https://tours-travel-backend-ebon.vercel.app/Auth/users/:path*"
+    },
+    {
+      "source": "/(.*)", 
+      "destination": "/"
+    }
+  ]
 }
-  
