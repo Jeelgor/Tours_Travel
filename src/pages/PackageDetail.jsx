@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom'; // Import useLocation
 import axios from 'axios';
-
+const apiUrl = import.meta.env.VITE_API_URL
 const PackageDetail = () => {
   const { pkgId } = useParams();
   const location = useLocation();
@@ -15,7 +15,7 @@ const PackageDetail = () => {
   useEffect(() => {
     const fetchPackageDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/Auth/users/getTourDetailPackages/${pkgId}`);
+        const response = await axios.get(`${apiUrl}/Auth/users/getTourDetailPackages/${pkgId}`);
         setPackageDetail(response.data);
         setLoading(false);
       } catch (err) {
