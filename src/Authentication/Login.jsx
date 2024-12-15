@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const apiUrl = import.meta.env.VITE_API_URL 
-console.log(apiUrl,111);
+const apiUrl = import.meta.env.VITE_API_URL
+console.log(apiUrl, 111);
 const Login = () => {
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
@@ -50,7 +50,7 @@ const Login = () => {
 
         if (token) {
             try {
-                const response = await axios.get('http://localhost:3000/Auth/users/protected-route', {
+                const response = await axios.get(`${apiUrl}Auth/users/protected-route`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
