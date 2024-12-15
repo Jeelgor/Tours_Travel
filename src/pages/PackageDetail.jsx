@@ -15,7 +15,7 @@ const PackageDetail = () => {
   useEffect(() => {
     const fetchPackageDetail = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/Auth/users/getTourDetailPackages/${pkgId}`);
+        const response = await axios.get(`${apiUrl}Auth/users/getTourDetailPackages/${pkgId}`);
         setPackageDetail(response.data);
         setLoading(false);
       } catch (err) {
