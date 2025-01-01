@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/Auth/users/:path*",
-      "destination": "https://tours-travel-backend-ebon.vercel.app/Auth/users/:path*"
+      "destination": "https://tours-travel-backend-tau.vercel.app/Auth/users/:path*"
     },
     {
       "source": "/api/payment/:path*",
-      "destination": "https://tours-travel-backend-ebon.vercel.app/api/payment/:path*"
+      "destination": "https://tours-travel-backend-tau.vercel.app/api/payment/:path*"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://tours-travel-backend-ebon.vercel.app/api/:path*"
+      "destination": "https://tours-travel-backend-tau.vercel.app/api/:path*"
     },
     {
       "source": "/(.*)",
