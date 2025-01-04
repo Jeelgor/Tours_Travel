@@ -1,20 +1,11 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "framework": "create-react-app",
   "rewrites": [
     {
-      "source": "/Auth/users/:path*",
-      "destination": "https://tours-travel-backend-tau.vercel.app/Auth/users/:path*"
-    },
-    {
-      "source": "/api/payment/:path*",
-      "destination": "https://tours-travel-backend-tau.vercel.app/api/payment/:path*"
-    },
-    {
       "source": "/api/:path*",
-      "destination": "https://tours-travel-backend-tau.vercel.app/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
+      "destination": "https://your-backend-url.com/api/:path*"
     }
   ]
 }
