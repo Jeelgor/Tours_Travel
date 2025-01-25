@@ -34,7 +34,7 @@ const OtpVerification = () => {
         const otpString = otp.join('');
 
         // API call for OTP verification
-        axios.post(`${apiUrl}Auth/users/verify-Otp`, { otp: otpString })
+        axios.post(`${apiUrl}/Auth/users/verify-Otp`, { otp: otpString })
             .then(result => {
                 console.log(result); // Verify this log appears
                 toast("OTP verified successfully!");

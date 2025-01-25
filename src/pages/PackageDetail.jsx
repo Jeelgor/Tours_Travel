@@ -15,7 +15,7 @@ const PackageDetail = () => {
   useEffect(() => {
     const fetchPackageDetail = async () => {
       try {
-        const response = await axios.get(`${apiUrl}Auth/users/getTourDetailPackages/${pkgId}`);
+        const response = await axios.get(`${apiUrl}/Auth/users/getTourDetailPackages/${pkgId}`);
         setPackageDetail(response.data);
         setLoading(false);
       } catch (err) {
@@ -60,11 +60,11 @@ const PackageDetail = () => {
       <section className="relative w-full h-[20vmax] lg:h-[30vmax] grid gap-1 grid-rows-2 grid-cols-3">
         {packageDetail.gallery && packageDetail.gallery.map((image, index) => (
           <img
-            key={index}
-            src={`http://localhost:3000/${image.replace(/\\/g, "/")}`}
-            alt={`Package image ${index + 1}`}
-            className={index === 0 ? "w-full h-full object-cover row-span-2 col-span-2" : "w-full h-full object-cover"}
-          />
+          key={index}
+          src={`http://localhost:3000/${image.replace(/\\/g, "/")}`}
+          alt={`Package image ${index + 1}`}
+          className={index === 0 ? "w-full h-full object-cover row-span-2 col-span-2" : "w-full h-full object-cover"}
+        />
         ))}
 
 

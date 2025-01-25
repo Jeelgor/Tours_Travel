@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./index.css";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Login from "./Authentication/Login";
 import SignUpUser from "./Authentication/SignUpUser";
 import OtpVerification from "./Authentication/OtpVerification";
@@ -27,7 +27,6 @@ import UserBookingStatus from "./pages/UserBookingStatus";
 
 // Load your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
 function App() {
   return (
     <Router>
@@ -40,14 +39,19 @@ function App() {
 
 function MainContent() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Define routes where the NavBar should not be shown
   const hideNavBarRoutes = ["/", "/login", "/OtpVerification"];
-
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token && (location.pathname === "/" || location.pathname === "/login")) {
+      navigate("/homepage");
+    }
+  }, [location, navigate]);
   return (
     <>
       <div>
-        {/* Conditionally render the NavBar only if the current route is not in hideNavBarRoutes */}
         {!hideNavBarRoutes.includes(location.pathname) && <NavBar />}
         <Routes>
           <Route path="/" element={<SignUpUser />} />

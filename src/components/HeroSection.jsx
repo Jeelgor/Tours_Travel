@@ -21,7 +21,7 @@ const HeroSection = () => {
     fromCity: formData.fromCity || '',
     toCity: formData.toCity || '',
     departureDate: formData.departureDate || '',
-    guests: formData.guests || 1,  // Default to 1 guest
+    guests: formData.guests || 1,  
   });
 
   useEffect(() => {
