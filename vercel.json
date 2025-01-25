@@ -25,6 +25,6 @@
   ],
   "env": {
     "VITE_API_URL": "https://tours-travel-backend-five.vercel.app",
-    "VITE_STRIPE_PUBLIC_KEY": "@stripe_public_key"
+    "VITE_STRIPE_PUBLIC_KEY": "pk_test_51QJ6lyENCwtICJmBN31R63zaU0whq0T9QqkZE6Yl0jsUbqj0AzRy0pvfhbmTlJM3IRmHmLtWZPr4k3NNwAlO1tW800HKMgrSWx"
   }
 }
