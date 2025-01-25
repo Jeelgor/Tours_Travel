@@ -13,8 +13,6 @@ const Login = () => {
     const LoginUser = async (event) => {
         event.preventDefault();
 
-        console.log("Attempting login with:", { Email, Password });
-
         try {
             // Login request to verify credentials
             const loginResponse = await axios.post(`${apiUrl}/Auth/users/loginuser`, {
