@@ -23,7 +23,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./components/PaymentForm";
 import UserBookingStatus from "./pages/UserBookingStatus";
-
+import { Analytics } from "@vercel/analytics/react"
 
 // Load your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -31,6 +31,7 @@ function App() {
   return (
     <Router>
       <Elements stripe={stripePromise}>
+        <Analytics />
         <MainContent />
       </Elements>
     </Router>

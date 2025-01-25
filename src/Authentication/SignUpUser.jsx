@@ -69,7 +69,6 @@ const SignUpUser = () => {
             SetPassword
         })
             .then(result => {
-                console.log(result);
                 navigate("/login");
                 toast("Thank you for registering!");
             })
