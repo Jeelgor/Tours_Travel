@@ -61,7 +61,7 @@ const PackageDetail = () => {
         {packageDetail.gallery && packageDetail.gallery.map((image, index) => (
           <img
           key={index}
-          src={`http://localhost:3000/${image.replace(/\\/g, "/")}`}
+          src={`${apiUrl}/${image.replace(/\\/g, "/")}`}
           alt={`Package image ${index + 1}`}
           className={index === 0 ? "w-full h-full object-cover row-span-2 col-span-2" : "w-full h-full object-cover"}
         />
