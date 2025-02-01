@@ -60,11 +60,11 @@ const PackageDetail = () => {
       <section className="relative w-full h-[20vmax] lg:h-[30vmax] grid gap-1 grid-rows-2 grid-cols-3">
         {packageDetail.gallery && packageDetail.gallery.map((image, index) => (
           <img
-          key={index}
-          src={`${apiUrl}/${image.replace(/\\/g, "/")}`}
-          alt={`Package image ${index + 1}`}
-          className={index === 0 ? "w-full h-full object-cover row-span-2 col-span-2" : "w-full h-full object-cover"}
-        />
+            key={index}
+            src={image}
+            alt={`Package image ${index + 1}`}
+            className={index === 0 ? "w-full h-full object-cover row-span-2 col-span-2" : "w-full h-full object-cover"}
+          />
         ))}
 
 
