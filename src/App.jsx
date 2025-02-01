@@ -23,7 +23,12 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./components/PaymentForm";
 import UserBookingStatus from "./pages/UserBookingStatus";
+<<<<<<< Updated upstream
 import { Analytics } from "@vercel/analytics/react"
+=======
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
+>>>>>>> Stashed changes
 
 // Load your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -34,6 +39,7 @@ function App() {
         <Analytics />
         <MainContent />
       </Elements>
+      <SpeedInsights/>
     </Router>
   );
 }
