@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const BookingForm = () => {
     const location = useLocation();
     const navigate = useNavigate();  // Hook to programmatically navigate
     const { price, packageName, packageType, packageId } = location.state;
+    const { userId } = useUser();
 
     const [bookingData, setBookingData] = useState({
         name: '',
@@ -30,12 +32,13 @@ const BookingForm = () => {
         // Prepare booking data for initial submission
         const bookingDetails = {
             ...bookingData,
+            userId,
             packageName,  // Include the package name if needed
             packageType,  // Include the package type if needed
             packageId,
             price,        // Include price if you need it for payment
         };
-
+        console.log(userId, 222)
         // Sending booking data to backend with Axios
         try {
             const response = await axios.post(`${apiUrl}/api/book`, bookingDetails);
