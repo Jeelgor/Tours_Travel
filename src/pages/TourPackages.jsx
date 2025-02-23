@@ -160,7 +160,7 @@ const TourPackages = () => {
 
     return (
         <>
-            <div className='h-[87px] bg-Darkblue flex justify-center items-center'>
+            <div className='h-[87px] bg-Darkblue flex justify-center items-center mt-14'>
                 <div className='flex space-x-4'>
                     <div className='flex items-center bg-white px-3 py-2 rounded-md'>
                         <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
