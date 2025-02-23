@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import { useUser } from '../context/UserContext';
 
 
 const PaymentPage = () => {
@@ -12,7 +13,8 @@ const PaymentPage = () => {
     const elements = useElements();
     const navigate = useNavigate();
     const [clientSecret, setClientSecret] = useState("");
-    const [userId, setUserId] = useState("");
+    // const [userId] = useState("");
+    const { userId, setUserId } = useUser();
     const [userEmail, SetEmail] = useState(null);
 
 
