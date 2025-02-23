@@ -70,7 +70,7 @@ function MainContent() {
           <Route path="/TourPackages/:packageType" element={<ProtectedRoute><TourPackages /></ProtectedRoute>} />
           <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
           <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-          <Route path="/my-profile" element={<MyProfile />} />
+          <Route path="/profile" element={<MyProfile />} />
           <Route path="/my-package" element={<MyPackage />} />
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
           <Route path="/BookingForm" element={<BookingForm />} />
