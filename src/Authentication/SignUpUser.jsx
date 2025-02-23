@@ -1,151 +1,361 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../index.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import 'react-toastify/dist/ReactToastify.css';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const SignUpUser = () => {
     const [FirstName, SetFirstName] = useState("");
     const [LastName, SetLastName] = useState("");
     const [Email, SetEmail] = useState("");
-    const [Password, SetuPassword] = useState("");
-    const [SetPassword, SetSetPassword] = useState("");
+    const [Password, SetPassword] = useState("");
+    const [ConfirmPassword, SetConfirmPassword] = useState("");
+    const [Address, SetAddress] = useState("");
+    const [MobileNumber, SetMobileNumber] = useState("");
+    const [Pincode, SetPincode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const validateFields = () => {
-        // Check for empty fields
-        if (!FirstName.trim() || !LastName.trim() || !Email.trim() || !Password.trim() || !SetPassword.trim()) {
-            toast.error("All fields are required");
-            return false;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(Email)) {
-            toast.error("Invalid email format");
-            return false;
-        }
-
-        // Password strength validation
-        if (Password.length < 8) {
-            toast.error("Password must be at least 8 characters long");
-            return false;
-        }
-        if (!/[A-Z]/.test(Password)) {
-            toast.error("Password must contain at least one uppercase letter");
-            return false;
-        }
-        if (!/[a-z]/.test(Password)) {
-            toast.error("Password must contain at least one lowercase letter");
-            return false;
-        }
-        if (!/[0-9]/.test(Password)) {
-            toast.error("Password must contain at least one number");
-            return false;
-        }
-
-        // Check if passwords match
-        if (Password !== SetPassword) {
-            toast.error("Passwords do not match");
-            return false;
-        }
-
-        return true;
-    };
-
-    const RegisterUser = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
-        if (!validateFields()) {
+        if (Password !== ConfirmPassword) {
+            toast.error("Passwords do not match");
+            setIsLoading(false);
             return;
         }
 
-        axios.post(`${apiUrl}/Auth/users/register`, {
-            FirstName,
-            LastName,
-            Email,
-            Password,
-            SetPassword
-        })
-            .then(result => {
-                navigate("/login");
-                toast("Thank you for registering!");
-            })
-            .catch(err => {
-                console.error(err);
-                toast.error("Registration failed. Please try again.");
+        try {
+            const response = await axios.post(`${apiUrl}/Auth/users/register`, {
+                FirstName,
+                LastName,
+                Email,
+                Password,
+                Address,
+                MobileNumber,
+                Pincode
             });
+
+            if (response.data) {
+                toast.success("Registration successful! Please check your email for OTP");
+                navigate("/otp-verification");
+            }
+        } catch (err) {
+            console.error("Registration error:", err);
+            toast.error(err.response?.data?.message || "Registration failed. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="bg-lightblue h-screen w-screen flex items-center justify-center">
-            <div className="w-[290px] h-[500px] md:w-[528px] md:h-[478px] bg-white rounded-lg">
-                <h1 className="text-center p-4 text-2xl">CREATE ACCOUNT</h1>
-
-                <form onSubmit={RegisterUser}>
-                    <div className="md:flex">
-                        <div className="px-8 mt-7">
-                            <input
-                                type="text"
-                                className="border-b border-gray-500 focus:outline-none p-2"
-                                placeholder="First Name"
-                                value={FirstName}
-                                onChange={(e) => SetFirstName(e.target.value)}
-                            />
-                        </div>
-                        <div className="px-8 mt-7">
-                            <input
-                                type="text"
-                                className="border-b border-gray-500 focus:outline-none p-2"
-                                placeholder="Last Name"
-                                value={LastName}
-                                onChange={(e) => SetLastName(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className="px-8 mt-7">
-                        <div>
-                            <input
-                                type="email"
-                                className="border-b border-gray-500 focus:outline-none p-2"
-                                placeholder="Email"
-                                value={Email}
-                                onChange={(e) => SetEmail(e.target.value)}
-                            />
-                        </div>
-                        <div className="mt-7">
-                            <input
-                                type="password"
-                                className="border-b border-gray-500 focus:outline-none p-2"
-                                placeholder="Password"
-                                value={Password}
-                                onChange={(e) => SetuPassword(e.target.value)}
-                            />
-                        </div>
-                        <div className="mt-7">
-                            <input
-                                type="password"
-                                className="border-b border-gray-500 focus:outline-none p-2"
-                                placeholder="Confirm Password"
-                                value={SetPassword}
-                                onChange={(e) => SetSetPassword(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex justify-center mt-10">
-                        <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 w-[200px] md:w-[400px] h-[40px] text-xl text-white">
-                            Register
-                        </button>
-                    </div>
-                    <Link to="/login" className="flex justify-center mt-4">
-                        <p>Already a user? Login</p>
-                    </Link>
-                </form>
+        <div className="min-h-screen w-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 relative overflow-hidden flex items-center justify-center">
+            {/* Animated background particles */}
+            <div className="absolute inset-0">
+                {[...Array(20)].map((_, i) => (
+                    <motion.div
+                        key={i}
+                        className="absolute bg-white/5 rounded-full"
+                        style={{
+                            width: Math.random() * 80 + 40,
+                            height: Math.random() * 80 + 40,
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                        }}
+                        animate={{
+                            x: [0, Math.random() * 100 - 50],
+                            y: [0, Math.random() * 100 - 50],
+                        }}
+                        transition={{
+                            duration: Math.random() * 15 + 25,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                            delay: Math.random() * 5,
+                        }}
+                    />
+                ))}
             </div>
-            <ToastContainer />
-        </div>
 
+            {/* Main content container */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/10 backdrop-blur-lg rounded-xl p-8 w-full max-w-md mx-4 shadow-2xl relative"
+            >
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/10 to-transparent pointer-events-none"
+                />
+
+                <motion.h1 
+                    className="text-3xl font-bold text-center bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent mb-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    Create Account
+                </motion.h1>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="First Name"
+                                    value={FirstName}
+                                    onChange={(e) => SetFirstName(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Last Name"
+                                    value={LastName}
+                                    onChange={(e) => SetLastName(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="email"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Email"
+                                    value={Email}
+                                    onChange={(e) => SetEmail(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Password"
+                                    value={Password}
+                                    onChange={(e) => SetPassword(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.7 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Confirm Password"
+                                    value={ConfirmPassword}
+                                    onChange={(e) => SetConfirmPassword(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="group col-span-2"
+                        >
+                            <div className="relative">
+                                <textarea
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Address"
+                                    value={Address}
+                                    onChange={(e) => SetAddress(e.target.value)}
+                                    rows="3"
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.9 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Mobile Number"
+                                    value={MobileNumber}
+                                    onChange={(e) => SetMobileNumber(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.0 }}
+                            className="group"
+                        >
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all group-hover:bg-white/30"
+                                    placeholder="Pincode"
+                                    value={Pincode}
+                                    onChange={(e) => SetPincode(e.target.value)}
+                                />
+                                <motion.div
+                                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                    initial={false}
+                                    animate={{ scale: [0.95, 1], opacity: [0, 1] }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.1 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="relative group"
+                    >
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+                        >
+                            <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                                initial={false}
+                                animate={{ x: ['0%', '100%'] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                            />
+                            {isLoading ? (
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full mx-auto"
+                                />
+                            ) : "Sign Up"}
+                        </button>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.2 }}
+                        className="text-center"
+                    >
+                        <Link 
+                            to="/login" 
+                            className="text-white/80 hover:text-white transition-colors duration-300 group relative inline-block"
+                        >
+                            Already have an account? 
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-pink-200 ml-1 group-hover:from-white group-hover:to-white transition-all duration-300">
+                                Login
+                            </span>
+                            <motion.div
+                                className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                                initial={false}
+                            />
+                        </Link>
+                    </motion.div>
+                </form>
+            </motion.div>
+
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
+        </div>
     );
 }
 
