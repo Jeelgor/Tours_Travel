@@ -42,7 +42,7 @@ const SignUpUser = () => {
 
             if (response.data) {
                 toast.success("Registration successful! Please check your email for OTP");
-                navigate("/otp-verification");
+                setTimeout(() => navigate("/otp-verification"), 1500);
             }
         } catch (err) {
             console.error("Registration error:", err);
@@ -304,19 +304,18 @@ const SignUpUser = () => {
                             disabled={isLoading}
                             className="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300 relative overflow-hidden"
                         >
-                            <motion.div
-                                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-                                initial={false}
-                                animate={{ x: ['0%', '100%'] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                            />
                             {isLoading ? (
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full mx-auto"
-                                />
-                            ) : "Sign Up"}
+                                <div className="flex items-center justify-center">
+                                    <motion.div
+                                        className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                    />
+                                    <span className="ml-2">Signing up...</span>
+                                </div>
+                            ) : (
+                                "Sign Up"
+                            )}
                         </button>
                     </motion.div>
 

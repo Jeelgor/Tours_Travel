@@ -153,18 +153,14 @@ const OtpVerification = () => {
                             whileTap={{ scale: isLoading ? 1 : 0.98 }}
                         >
                             {isLoading ? (
-                                <motion.div
-                                    className="flex items-center justify-center"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                >
+                                <div className="flex items-center justify-center">
                                     <motion.div
                                         className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
                                         animate={{ rotate: 360 }}
                                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                                     />
                                     <span className="ml-2">Verifying...</span>
-                                </motion.div>
+                                </div>
                             ) : (
                                 "Verify OTP"
                             )}

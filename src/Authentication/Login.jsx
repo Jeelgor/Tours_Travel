@@ -11,9 +11,11 @@ const Login = () => {
   const [Email, SetEmail] = useState("");
   const [Password, SetPassword] = useState("");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const LoginUser = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       const loginResponse = await axios.post(`${apiUrl}/Auth/users/loginuser`, {
@@ -32,6 +34,8 @@ const Login = () => {
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Login failed. Please try again.";
       toast(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,15 +166,21 @@ const Login = () => {
           >
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300 relative overflow-hidden"
             >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-                initial={false}
-                animate={{ x: ['0%', '100%'] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              />
-              Login
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <motion.div
+                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <span className="ml-2">Logging in...</span>
+                </div>
+              ) : (
+                "Login"
+              )}
             </button>
           </motion.div>
 

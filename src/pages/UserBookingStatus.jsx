@@ -1,143 +1,407 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaPlane, FaCreditCard, FaSpinner, FaCheck, FaTimes, FaPrint } from "react-icons/fa";
+import { format } from "date-fns";
+import PrintableBill from '../components/PrintableBill';
+import { useUser } from '../context/UserContext';
+
 
 const UserBookingStatus = () => {
     const [bookings, setBookings] = useState([]);
     const [payments, setPayments] = useState([]);
-    const [userEmail, setUserEmail] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("bookings");
+    const { userId, setUserId } = useUser();
+    const apiUrl = import.meta.env.VITE_API_URL
 
-    // Fetch bookings data
     useEffect(() => {
-        async function fetchBookings() {
+        async function fetchData() {
             try {
-                const result = await axios.get("http://localhost:3000/api/bookings");
-                console.log("Bookings API Response:", result.data.data);
-                setBookings(result.data.data);
-                setLoading(false);
+                const token = localStorage.getItem("authToken");
+                const [bookingsRes, paymentsRes, userRes] = await Promise.all([
+                    axios.get(`${apiUrl}/api/bookings`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`${apiUrl}/api/payment/getpayment`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`${apiUrl}/Auth/users/userProfile`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
 
+                setUserId(userRes.data._id);
+                setBookings(bookingsRes.data.data);
+                setPayments(paymentsRes.data.data);
+
+                console.log('User ID:', userRes.data._id);
+                console.log('Bookings:', bookingsRes.data.data);
+                console.log('Payments:', paymentsRes.data.data);
             } catch (error) {
-                console.error("Error fetching bookings", error);
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
             }
         }
 
-        fetchBookings();
-    }, []);
+        fetchData();
+    }, [setUserId]);
 
-    // Fetch payments data
-    useEffect(() => {
-        async function fetchPayments() {
-            try {
-                const result = await axios.get("http://localhost:3000/api/payment/getpayment");
-                console.log("Payments API Response:", result.data.data);
-                setPayments(result.data.data);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching payments", error);
-            }
+    const userBookings = bookings.filter(booking => booking.userId === userId);
+    const userPayments = payments.filter(payment => payment.userId === userId);
+
+    const getStatusIcon = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'completed':
+            case 'success':
+            case 'succeeded':
+                return <FaCheck className="text-green-500" />;
+            case 'pending':
+                return <FaSpinner className="text-yellow-500 animate-spin" />;
+            case 'failed':
+            case 'cancelled':
+                return <FaTimes className="text-red-500" />;
+            default:
+                return null;
         }
+    };
 
-        fetchPayments();
-    }, []);
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'completed':
+            case 'success':
+            case 'succeeded':
+                return 'text-green-500';
+            case 'pending':
+                return 'text-yellow-500';
+            case 'failed':
+            case 'cancelled':
+                return 'text-red-500';
+            default:
+                return 'text-gray-500';
+        }
+    };
 
-    // Fetch user profile
-    useEffect(() => {
-        const fetchUser = async () => {
-            const token = localStorage.getItem("authToken");
-            if (token) {
-                try {
-                    const response = await axios.get("http://localhost:3000/Auth/users/userProfile", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    console.log("User Profile API Response:", response.data);
-                    setUserEmail(response.data.Email);
-                    setLoading(false);
+    const handlePrintBill = (payment) => {
+        // Create a temporary div for the bill
+        const printWindow = window.open('', '_blank');
 
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+        // Add necessary styles
+        const styles = `
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    max-width: 800px;
+                    margin: 0 auto;
                 }
-            }
-        };
-        fetchUser();
-    }, []);
+                .bill-header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                .bill-details {
+                    margin-bottom: 20px;
+                }
+                .amount {
+                    font-size: 24px;
+                    color: #2563eb;
+                    font-weight: bold;
+                }
+                .divider {
+                    border-top: 1px solid #e5e7eb;
+                    margin: 20px 0;
+                }
+                .footer {
+                    margin-top: 40px;
+                    text-align: center;
+                    color: #6b7280;
+                    font-size: 14px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    padding: 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+            </style>
+        `;
 
-    // Filter bookings and payments for the current user
-    const userBookings = bookings.filter(booking => booking.email === userEmail);
-    const userPayments = payments.filter(payment => payment.userEmail === userEmail);
+        // Create bill content
+        const content = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Travel Booking Receipt</title>
+                ${styles}
+            </head>
+            <body>
+                <div class="bill-header">
+                    <h1>Travel Booking Receipt</h1>
+                    <p>Invoice #${payment._id.slice(-6)}</p>
+                </div>
+
+                <div class="bill-details">
+                    <h2>${payment.packageName}</h2>
+                    <p>Transaction Date: ${format(new Date(payment.paymentDate), 'MMM dd, yyyy')}</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <table>
+                    <tr>
+                        <td><strong>Customer Email:</strong></td>
+                        <td>${payment.userEmail}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Method:</strong></td>
+                        <td>${payment.paymentMethod}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status:</strong></td>
+                        <td>${payment.status}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Transaction ID:</strong></td>
+                        <td>${payment.paymentIntentId}</td>
+                    </tr>
+                </table>
+
+                <div class="divider"></div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th style="text-align: right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Travel Package Booking</td>
+                            <td style="text-align: right;">₹${payment.amount}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total Amount</th>
+                            <th style="text-align: right;">₹${payment.amount}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="footer">
+                    <p>Thank you for choosing our services!</p>
+                    <p>For any queries, please contact support@travel.com</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Write content to the new window
+        printWindow.document.write(content);
+        printWindow.document.close();
+
+        // Print after the content is loaded
+        printWindow.onload = function () {
+            printWindow.print();
+            printWindow.onafterprint = function () {
+                printWindow.close();
+            };
+        };
+    };
 
     if (loading) {
-        return <div className="text-center">Loading...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="text-4xl text-blue-500"
+                >
+                    <FaSpinner />
+                </motion.div>
+            </div>
+        );
     }
 
+    console.log('Current userId:', userId);
+    console.log('All bookings:', bookings);
+    console.log('Filtered bookings:', userBookings);
+    console.log('All payments:', payments);
+    console.log('Filtered payments:', userPayments);
+
     return (
-        <div className="container mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">User Booking Status</h1>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-7xl mx-auto"
+            >
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-white">
+                        <h1 className="text-3xl font-bold">Your Travel Dashboard</h1>
+                        <p className="text-blue-100 mt-2">Track your bookings and payments</p>
+                    </div>
 
-            {/* Bookings Section */}
-            <h2 className="text-xl font-semibold mt-6">Bookings</h2>
-            {userBookings.length === 0 ? (
-                <p>No bookings found for this user.</p>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto border-collapse">
-                        <thead>
-                            <tr className="bg-gray-100">
-                                <th className="py-2 px-4 border-b">User Name</th>
-                                <th className="py-2 px-4 border-b">Email</th>
-                                <th className="py-2 px-4 border-b">Number of Travelers</th>
-                                <th className="py-2 px-4 border-b">Special Requests</th>
-                                <th className="py-2 px-4 border-b">From Date</th>
-                                <th className="py-2 px-4 border-b">To Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userBookings.map(booking => (
-                                <tr key={booking._id} className="hover:bg-gray-50">
-                                    <td className="py-2 px-4 border-b">{booking.name}</td>
-                                    <td className="py-2 px-4 border-b">{booking.email}</td>
-                                    <td className="py-2 px-4 border-b">{booking.numberOfTravelers}</td>
-                                    <td className="py-2 px-4 border-b">{booking.specialRequests}</td>
-                                    <td className="py-2 px-4 border-b">{new Date(booking.fromDate).toLocaleDateString()}</td>
-                                    <td className="py-2 px-4 border-b">{new Date(booking.toDate).toLocaleDateString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                    {/* Tabs */}
+                    <div className="border-b">
+                        <div className="flex space-x-8 px-6">
+                            <button
+                                onClick={() => setActiveTab("bookings")}
+                                className={`py-4 px-2 flex items-center space-x-2 border-b-2 transition-colors duration-200 ${activeTab === "bookings"
+                                        ? "border-blue-500 text-blue-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                    }`}
+                            >
+                                <FaPlane />
+                                <span>Bookings ({userBookings.length})</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("payments")}
+                                className={`py-4 px-2 flex items-center space-x-2 border-b-2 transition-colors duration-200 ${activeTab === "payments"
+                                        ? "border-blue-500 text-blue-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                    }`}
+                            >
+                                <FaCreditCard />
+                                <span>Payments ({userPayments.length})</span>
+                            </button>
+                        </div>
+                    </div>
 
-            {/* Payments Section */}
-            <h2 className="text-xl font-semibold mt-6">Payments</h2>
-            {userPayments.length === 0 ? (
-                <p>No payments found for this user.</p>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto border-collapse">
-                        <thead>
-                            <tr className="bg-gray-100">
-                                <th className="py-2 px-4 border-b">Package Name</th>
-                                <th className="py-2 px-4 border-b">Payment Intent ID</th>
-                                <th className="py-2 px-4 border-b">Amount</th>
-                                <th className="py-2 px-4 border-b">Status</th>
-                                <th className="py-2 px-4 border-b">Payment Method</th>
-                                <th className="py-2 px-4 border-b">Payment Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userPayments.map(payment => (
-                                <tr key={payment._id} className="hover:bg-gray-50">
-                                    <td className="py-2 px-4 border-b">{payment.packageName}</td>
-                                    <td className="py-2 px-4 border-b">{payment.paymentIntentId}</td>
-                                    <td className="py-2 px-4 border-b">₹{payment.amount}</td>
-                                    <td className="py-2 px-4 border-b">{payment.status}</td>
-                                    <td className="py-2 px-4 border-b">{payment.paymentMethod}</td>
-                                    <td className="py-2 px-4 border-b">{new Date(payment.paymentDate).toLocaleDateString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {/* Content */}
+                    <div className="p-6">
+                        <AnimatePresence mode="wait">
+                            {activeTab === "bookings" ? (
+                                <motion.div
+                                    key="bookings"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    className="space-y-6"
+                                >
+                                    {userBookings.length === 0 ? (
+                                        <div className="text-center py-12 text-gray-500">
+                                            No bookings found
+                                        </div>
+                                    ) : (
+                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                            {userBookings.map(booking => (
+                                                <motion.div
+                                                    key={booking._id}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
+                                                >
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <div>
+                                                            <h3 className="font-semibold text-lg">{booking.name}</h3>
+                                                            <p className="text-gray-500 text-sm">{booking.email}</p>
+                                                        </div>
+                                                        <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                                            {booking.numberOfTravelers} Travelers
+                                                        </span>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between text-sm">
+                                                            <span className="text-gray-500">From:</span>
+                                                            <span className="font-medium">
+                                                                {format(new Date(booking.fromDate), 'MMM dd, yyyy')}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between text-sm">
+                                                            <span className="text-gray-500">To:</span>
+                                                            <span className="font-medium">
+                                                                {format(new Date(booking.toDate), 'MMM dd, yyyy')}
+                                                            </span>
+                                                        </div>
+                                                        {booking.specialRequests && (
+                                                            <div className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                                                                {booking.specialRequests}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="payments"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    className="space-y-6"
+                                >
+                                    {userPayments.length === 0 ? (
+                                        <div className="text-center py-12 text-gray-500">
+                                            No payments found
+                                        </div>
+                                    ) : (
+                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                            {userPayments.map(payment => (
+                                                <motion.div
+                                                    key={payment._id}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
+                                                >
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <h3 className="font-semibold text-lg">{payment.packageName}</h3>
+                                                        <span className={`flex items-center space-x-1 ${getStatusColor(payment.status)}`}>
+                                                            {getStatusIcon(payment.status)}
+                                                            <span className="ml-1">{payment.status}</span>
+                                                        </span>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between text-sm">
+                                                            <span className="text-gray-500">Amount:</span>
+                                                            <span className="font-medium">₹{payment.amount}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-sm">
+                                                            <span className="text-gray-500">Payment Method:</span>
+                                                            <span className="font-medium">{payment.paymentMethod}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-sm">
+                                                            <span className="text-gray-500">Date:</span>
+                                                            <span className="font-medium">
+                                                                {format(new Date(payment.paymentDate), 'MMM dd, yyyy')}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center pt-4 mt-4 border-t">
+                                                            <div className="text-xs text-gray-500">
+                                                                ID: {payment.paymentIntentId}
+                                                            </div>
+                                                            <motion.button
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                onClick={() => handlePrintBill(payment)}
+                                                                className="flex items-center space-x-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                                                            >
+                                                                <FaPrint />
+                                                                <span>Print Bill</span>
+                                                            </motion.button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Hidden Printable Bill Component */}
+                                                    <div style={{ display: 'none' }}>
+                                                        <PrintableBill payment={payment} />
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
-            )}
+            </motion.div>
         </div>
     );
 };
