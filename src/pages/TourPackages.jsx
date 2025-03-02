@@ -335,7 +335,7 @@ const TourPackages = () => {
                                             navigate(`/package-detail/${item._id}`, { 
                                                 state: { 
                                                     price: item.price, 
-                                                    availableSeats: item.Seatleft 
+                                                    Seatleft: item.Seatleft 
                                                 } 
                                             });
                                         }}
@@ -376,22 +376,9 @@ const TourPackages = () => {
                                                         {item.currency} {item.price}
                                                     </p>
                                                     {item.Seatleft && (
-                                                        <div className="flex items-center justify-between mt-2">
-                                                            <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                                                                item.Seatleft > 10 
-                                                                    ? 'bg-green-100 text-green-800' 
-                                                                    : item.Seatleft > 5 
-                                                                        ? 'bg-yellow-100 text-yellow-800' 
-                                                                        : 'bg-red-100 text-red-800'
-                                                            }`}>
-                                                                {item.Seatleft} seats left
-                                                            </span>
-                                                            {item.Seatleft <= 5 && (
-                                                                <span className="text-xs text-red-500 font-medium">
-                                                                    Hurry up!
-                                                                </span>
-                                                            )}
-                                                        </div>
+                                                        <p className="text-sm text-gray-500">
+                                                            {item.Seatleft} seats left
+                                                        </p>
                                                     )}
                                                 </div>
                                             </div>

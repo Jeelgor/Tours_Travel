@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom'; // Import useLocation
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
 const apiUrl = import.meta.env.VITE_API_URL
 const PackageDetail = () => {
   const { pkgId } = useParams();
@@ -11,47 +10,23 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [numTravellers, setNumTravellers] = useState(1);
-  const { price } = location.state; // Accessing the price from the state
+  const { price, Seatleft } = location.state; // Accessing the price from the state
   const navigate = useNavigate();
-  const [availableSeats, setAvailableSeats] = useState(
-    location.state?.availableSeats || 30
-  );
-  
   useEffect(() => {
     const fetchPackageDetail = async () => {
       try {
         const response = await axios.get(`${apiUrl}/Auth/users/getTourDetailPackages/${pkgId}`);
         setPackageDetail(response.data);
-        // Update available seats only if not already set from location state
-        if (!location.state?.availableSeats) {
-          setAvailableSeats(response.data.availableSeats || 30);
-        }
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch package details.');
-        console.log(err);
+        console.log(err)
         setLoading(false);
       }
     };
 
-    // Set up real-time updates for available seats
-    const seatUpdateInterval = setInterval(fetchPackageDetail, 30000);
-
     fetchPackageDetail();
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(seatUpdateInterval);
-  }, [pkgId, location.state?.availableSeats]);
-
-  // Validate number of travelers against available seats
-  const handleTravellerChange = (e) => {
-    const value = Math.max(1, parseInt(e.target.value));
-    if (value <= availableSeats) {
-      setNumTravellers(value);
-    } else {
-      toast.error(`Only ${availableSeats} seats available`);
-    }
-  };
+  }, [pkgId]);
 
   // Check if loading
   if (loading) return <div>Loading...</div>;
@@ -76,8 +51,6 @@ const PackageDetail = () => {
         packageName: packageDetail.overview[0],
         packageId: pkgId,
         price: newprice,
-        availableSeats: availableSeats,
-        numTravellers: numTravellers
       },
     })
   }
@@ -173,65 +146,33 @@ const PackageDetail = () => {
       {/* Price Details */}
       <section id='Price-Details' className="bg-white p-4 relative rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-8">Price Details</h2>
-        
-        {/* Available Seats Indicator */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center">
-            <p className="text-lg text-gray-700 font-semibold">Available Seats</p>
-            <span className={`px-3 py-1 rounded-full ${
-              availableSeats > 10 
-                ? 'bg-green-100 text-green-800' 
-                : availableSeats > 5 
-                  ? 'bg-yellow-100 text-yellow-800' 
-                  : 'bg-red-100 text-red-800'
-            }`}>
-              {availableSeats} left
-            </span>
-          </div>
-          {availableSeats <= 5 && (
-            <p className="text-sm text-red-500 mt-1">
-              Hurry! Only {availableSeats} seats remaining
-            </p>
-          )}
-        </div>
-
         <div className="flex justify-between mb-2">
           <p className="text-lg text-gray-700 font-semibold">Starting price per traveller</p>
           <p className="text-lg text-gray-700 font-semibold">₹{price}</p>
         </div>
-        
         <div className="flex justify-between">
           <p className="text-lg text-gray-700 font-semibold">Number of travellers</p>
           <input
             type="number"
             value={numTravellers}
-            onChange={handleTravellerChange}
+            onChange={(e) => setNumTravellers(Math.max(1, e.target.value))}
             className="border rounded-lg w-20 p-1"
             min="1"
-            max={availableSeats}
           />
         </div>
-
         <div className="flex justify-between mt-4">
           <p className="text-lg font-semibold text-blue-500">Total Price</p>
           <p className="text-lg font-semibold text-blue-500">₹{totalPrice}</p>
         </div>
 
-        <div className="mt-4">
-          <button 
-            className={`w-full py-2 font-semibold text-lg rounded-md ${
-              availableSeats > 0 
-                ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            }`}
-            onClick={handleBooking}
-            disabled={availableSeats === 0}
-          >
-            {availableSeats > 0 ? 'Next: Final Details' : 'Sold Out'}
-          </button>
-        </div>
-      </section>
-    </div>
+        {
+          Seatleft <= 0 ? <span>Sorry The Package Seat Was Full we will notify when Package will available</span> : <div>
+            <button className="bg-blue-500 text-white w-full py-2 font-semibold text-lg rounded-md hover:bg-blue-600" onClick={handleBooking}>Book Now</button>
+            <span className='text-red-800'>Hurry Up Limited Seats are available {Seatleft}</span>
+          </div>
+        }
+      </section >
+    </div >
   );
 };
 

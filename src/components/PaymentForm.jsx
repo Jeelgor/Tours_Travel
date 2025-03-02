@@ -108,7 +108,7 @@ const PaymentPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-6 px-4 md:py-12">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -118,44 +118,56 @@ const PaymentPage = () => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 backdrop-blur-lg border border-gray-100"
+                    className="bg-white rounded-xl md:rounded-2xl shadow-xl overflow-hidden mb-6 backdrop-blur-lg border border-gray-100"
                 >
-                    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-10 relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-4 md:px-8 py-6 md:py-10 relative overflow-hidden">
                         <div className="absolute inset-0 bg-grid-white/10 opacity-10"></div>
-                        <h2 className="text-3xl font-bold text-white mb-2">{bookingDetails.packageName}</h2>
-                        <p className="text-blue-100 mb-6">Complete your booking by making a secure payment</p>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
-                                <FaUsers className="text-white mb-2 text-xl" />
-                                <p className="text-blue-100">Package Type</p>
-                                <p className="text-xl font-semibold text-white">{bookingDetails.packageType}</p>
+                        <h2 className="text-xl md:text-3xl font-bold text-white mb-2">{bookingDetails.packageName}</h2>
+                        <p className="text-blue-100 mb-4 md:mb-6 text-sm md:text-base">Complete your booking by making a secure payment</p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 md:p-4">
+                                <FaUsers className="text-white mb-2 text-lg md:text-xl" />
+                                <p className="text-blue-100 text-sm">Package Type</p>
+                                <p className="text-base md:text-xl font-semibold text-white truncate">{bookingDetails.packageType}</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
-                                <FaCalendarAlt className="text-white mb-2 text-xl" />
-                                <p className="text-blue-100">Number of Travelers</p>
-                                <p className="text-xl font-semibold text-white">{bookingDetails.numTravellers}</p>
+                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 md:p-4">
+                                <FaCalendarAlt className="text-white mb-2 text-lg md:text-xl" />
+                                <p className="text-blue-100 text-sm">Number of Travelers</p>
+                                <p className="text-base md:text-xl font-semibold text-white">{bookingDetails.numTravellers}</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
-                                <FaCreditCard className="text-white mb-2 text-xl" />
-                                <p className="text-blue-100">Total Amount</p>
-                                <p className="text-2xl font-semibold text-white">₹{bookingDetails.price}</p>
+                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 md:p-4">
+                                <FaCreditCard className="text-white mb-2 text-lg md:text-xl" />
+                                <p className="text-blue-100 text-sm">Total Amount</p>
+                                <p className="text-lg md:text-2xl font-semibold text-white">₹{bookingDetails.price}</p>
                             </div>
                         </div>
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Payment Form */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="lg:col-span-2 bg-white rounded-2xl shadow-xl p-8 backdrop-blur-lg border border-gray-100"
+                        className="lg:col-span-2 bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-8 backdrop-blur-lg border border-gray-100"
                     >
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Payment Details</h3>
-                        <form onSubmit={handlePayment} className="space-y-6">
-                            <div className="space-y-6">
-                                <div className="p-4 bg-gray-50 rounded-lg">
-                                    <CardElement options={cardStyle} className="py-4" />
+                        <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">Payment Details</h3>
+                        <form onSubmit={handlePayment} className="space-y-4 md:space-y-6">
+                            <div className="space-y-4 md:space-y-6">
+                                <div className="p-3 md:p-4 bg-gray-50 rounded-lg">
+                                    <CardElement 
+                                        options={{
+                                            ...cardStyle,
+                                            style: {
+                                                ...cardStyle.style,
+                                                base: {
+                                                    ...cardStyle.style.base,
+                                                    fontSize: window.innerWidth < 768 ? '14px' : '16px',
+                                                }
+                                            }
+                                        }} 
+                                        className="py-2 md:py-4" 
+                                    />
                                 </div>
                             </div>
 
@@ -164,7 +176,7 @@ const PaymentPage = () => {
                                 disabled={!stripe || !clientSecret || isProcessing}
                                 whileHover={{ scale: 1.01 }}
                                 whileTap={{ scale: 0.99 }}
-                                className={`w-full py-4 rounded-xl text-white font-semibold text-lg 
+                                className={`w-full py-3 md:py-4 rounded-xl text-white font-semibold text-sm md:text-lg 
                                     ${(!stripe || !clientSecret || isProcessing)
                                         ? 'bg-gray-400 cursor-not-allowed' 
                                         : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700'
@@ -175,9 +187,9 @@ const PaymentPage = () => {
                                         <motion.div
                                             animate={{ rotate: 360 }}
                                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                            className="w-6 h-6 border-3 border-white border-t-transparent rounded-full mr-2"
+                                            className="w-5 h-5 md:w-6 md:h-6 border-2 md:border-3 border-white border-t-transparent rounded-full mr-2"
                                         />
-                                        Processing...
+                                        <span className="text-sm md:text-base">Processing...</span>
                                     </div>
                                 ) : (
                                     `Pay ₹${bookingDetails.price}`
@@ -190,30 +202,30 @@ const PaymentPage = () => {
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-white rounded-2xl shadow-xl p-8 h-fit backdrop-blur-lg border border-gray-100"
+                        className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-8 h-fit backdrop-blur-lg border border-gray-100"
                     >
-                        <h3 className="text-xl font-bold text-gray-800 mb-6">Payment Security</h3>
-                        <div className="space-y-6">
-                            <div className="flex items-start space-x-4">
-                                <div className="p-3 bg-green-100 rounded-lg">
-                                    <FaShieldAlt className="text-green-600 text-xl" />
+                        <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-6">Payment Security</h3>
+                        <div className="space-y-4 md:space-y-6">
+                            <div className="flex items-start space-x-3 md:space-x-4">
+                                <div className="p-2 md:p-3 bg-green-100 rounded-lg">
+                                    <FaShieldAlt className="text-green-600 text-base md:text-xl" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-800">Secure Payment</h4>
-                                    <p className="text-sm text-gray-600">Your payment is processed securely with Stripe</p>
+                                    <h4 className="font-semibold text-gray-800 text-sm md:text-base">Secure Payment</h4>
+                                    <p className="text-xs md:text-sm text-gray-600">Your payment is processed securely with Stripe</p>
                                 </div>
                             </div>
-                            <div className="flex items-start space-x-4">
-                                <div className="p-3 bg-blue-100 rounded-lg">
-                                    <FaLock className="text-blue-600 text-xl" />
+                            <div className="flex items-start space-x-3 md:space-x-4">
+                                <div className="p-2 md:p-3 bg-blue-100 rounded-lg">
+                                    <FaLock className="text-blue-600 text-base md:text-xl" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-800">Privacy Protected</h4>
-                                    <p className="text-sm text-gray-600">Your data is encrypted and never stored</p>
+                                    <h4 className="font-semibold text-gray-800 text-sm md:text-base">Privacy Protected</h4>
+                                    <p className="text-xs md:text-sm text-gray-600">Your data is encrypted and never stored</p>
                                 </div>
                             </div>
-                            <hr className="my-6" />
-                            <div className="text-sm text-gray-600">
+                            <hr className="my-4 md:my-6" />
+                            <div className="text-xs md:text-sm text-gray-600">
                                 <p className="mb-2">By proceeding with the payment, you agree to our:</p>
                                 <ul className="list-disc list-inside space-y-1 text-gray-500">
                                     <li>Terms of Service</li>
