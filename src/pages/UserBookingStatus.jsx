@@ -285,13 +285,13 @@ const UserBookingStatus = () => {
                                     exit={{ opacity: 0, x: 20 }}
                                     className="space-y-6"
                                 >
-                                    {userBookings.length === 0 ? (
+            {userBookings.length === 0 ? (
                                         <div className="text-center py-12 text-gray-500">
                                             No bookings found
                                         </div>
                                     ) : (
                                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                            {userBookings.map(booking => (
+                            {userBookings.map(booking => (
                                                 <motion.div
                                                     key={booking._id}
                                                     whileHover={{ scale: 1.02 }}
@@ -327,8 +327,8 @@ const UserBookingStatus = () => {
                                                     </div>
                                                 </motion.div>
                                             ))}
-                                        </div>
-                                    )}
+                </div>
+            )}
                                 </motion.div>
                             ) : (
                                 <motion.div
@@ -338,13 +338,13 @@ const UserBookingStatus = () => {
                                     exit={{ opacity: 0, x: 20 }}
                                     className="space-y-6"
                                 >
-                                    {userPayments.length === 0 ? (
+            {userPayments.length === 0 ? (
                                         <div className="text-center py-12 text-gray-500">
                                             No payments found
                                         </div>
                                     ) : (
                                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                            {userPayments.map(payment => (
+                            {userPayments.map(payment => (
                                                 <motion.div
                                                     key={payment._id}
                                                     whileHover={{ scale: 1.02 }}

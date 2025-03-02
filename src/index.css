@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark mode transitions */
+.dark {
+    @apply transition-colors duration-200;
+}
+
+/* Loader animation */
+.loader {
+    @apply w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin;
+}
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-full;
+}
+
 .active hr{
     @apply block;
 }
@@ -17,5 +40,22 @@
         position: absolute;
         left: 0;
         top: 0;
+    }
+}
+
+/* Filter sidebar transitions */
+.sidebar-transition {
+    @apply transition-transform duration-300 ease-in-out;
+}
+
+/* Custom checkbox styles */
+input[type="checkbox"] {
+    @apply w-4 h-4 cursor-pointer;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    input, select, textarea {
+        @apply text-base; /* Larger text on mobile */
     }
 }
