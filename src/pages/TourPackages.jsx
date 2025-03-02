@@ -2,17 +2,27 @@ import { useContext, useState, useEffect, useMemo } from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { SlCalender } from "react-icons/sl";
 import { GoPeople } from "react-icons/go";
-import bannerimg from "../assets/banner.png";
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
+import { FiFilter } from 'react-icons/fi';
+import { IoMdClose } from 'react-icons/io';
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const ITEMS_PER_PAGE = 8;
 
 const TourPackages = () => {
     const navigate = useNavigate();
     const { packageType } = useParams();
-    const { formData, setFormData } = useContext(AppContext);
+    const { setFormData } = useContext(AppContext);
+
+    const today = new Date();
+    const oneMonthLater = new Date(today);
+    oneMonthLater.setMonth(today.getMonth() + 1);
+    const formattedToday = today.toISOString().split('T')[0];
+    const formattedNextMonth = oneMonthLater.toISOString().split('T')[0];
 
     // State management
     const [packages, setPackages] = useState([]);
@@ -20,46 +30,38 @@ const TourPackages = () => {
     const [selectedDurations, setSelectedDurations] = useState([]);
     const [selectedRatings, setSelectedRatings] = useState([]);
     const [searchTriggered, setSearchTriggered] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [localFormData, setLocalFormData] = useState({
         fromCity: '',
         toCity: '',
         departureDate: '',
         guests: 1
     });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Date calculations
-    const today = new Date();
-    const oneMonthLater = new Date(today);
-    oneMonthLater.setMonth(today.getMonth() + 1);
-    const formattedToday = today.toISOString().split('T')[0];
-    const formattedNextMonth = oneMonthLater.toISOString().split('T')[0];
-
-    // Effects
+    // Theme toggle effect
     useEffect(() => {
-        setSelectedPackageType(packageType);
-    }, [packageType]);
+        document.documentElement.classList.toggle('dark', isDarkMode);
+    }, [isDarkMode]);
 
+    // Fetch packages with loading state
     useEffect(() => {
+        setIsLoading(true);
         axios.get(`${apiUrl}/Auth/users/getTourPackages`)
             .then((result) => {
                 setPackages(result.data);
+                setIsLoading(false);
             })
             .catch(err => {
                 console.error("Error fetching packages:", err);
+                setIsLoading(false);
             });
     }, []);
 
-    useEffect(() => {
-        setLocalFormData({
-            fromCity: formData.fromCity || '',
-            toCity: formData.toCity || '',
-            departureDate: formData.departureDate || '',
-            guests: formData.guests || 1,
-        });
-    }, [formData]);
-
-    // Filter logic
-    const applyFilter = () => {
+    // Filter logic with memoization
+    const filteredPackages = useMemo(() => {
         let filtered = packages;
 
         if (selectedPackageType) {
@@ -88,19 +90,60 @@ const TourPackages = () => {
         }
 
         return filtered;
-    };
+    }, [selectedPackageType, packages, selectedDurations, selectedRatings, searchTriggered, localFormData.toCity]);
 
-    const filteredPackages = useMemo(applyFilter, [
-        selectedPackageType, 
-        packages, 
-        selectedDurations, 
-        selectedRatings, 
-        searchTriggered, 
-        localFormData.toCity
-    ]);
+    // Pagination logic
+    const totalPages = Math.ceil(filteredPackages.length / ITEMS_PER_PAGE);
+    const paginatedPackages = filteredPackages.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    // Pagination component
+    const Pagination = () => (
+        <div className="flex justify-center items-center space-x-2 mt-8">
+            <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg ${
+                    currentPage === 1 
+                        ? 'bg-gray-200 text-gray-500' 
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                } transition-colors`}
+            >
+                Previous
+            </button>
+            
+            {[...Array(totalPages)].map((_, idx) => (
+                <button
+                    key={idx}
+                    onClick={() => setCurrentPage(idx + 1)}
+                    className={`w-10 h-10 rounded-lg ${
+                        currentPage === idx + 1
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-200 hover:bg-gray-300'
+                    } transition-colors`}
+                >
+                    {idx + 1}
+                </button>
+            ))}
+            
+            <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 rounded-lg ${
+                    currentPage === totalPages 
+                        ? 'bg-gray-200 text-gray-500' 
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                } transition-colors`}
+            >
+                Next
+            </button>
+        </div>
+    );
 
     // Event handlers
-    const handleTabClick = (newPackageType) => {
+    const handlePackageTypeChange = (newPackageType) => {
         if (newPackageType === selectedPackageType) {
             setSelectedPackageType(null);
             navigate("/TourPackages");
@@ -158,245 +201,279 @@ const TourPackages = () => {
         );
     };
 
-    return (
-        <>
-            <div className='h-[87px] bg-Darkblue flex justify-center items-center mt-14'>
-                <div className='flex space-x-4'>
-                    <div className='flex items-center bg-white px-3 py-2 rounded-md'>
-                        <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
-                        <input
-                            type="text"
-                            name="fromCity"
-                            value={localFormData.fromCity}
-                            onChange={handleInputChange}
-                            placeholder="From City"
-                            className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                        />
-                    </div>
-                    <div className='flex items-center bg-white px-3 py-2 rounded-md'>
-                        <CiLocationOn className='text-Darkblue w-[24px] h-[24px]' />
-                        <input
-                            type="text"
-                            name="toCity"
-                            value={localFormData.toCity}
-                            onChange={handleInputChange}
-                            placeholder="To City"
-                            className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                        />
-                    </div>
-                    <div className='flex items-center bg-white px-3 py-2 rounded-md'>
-                        <SlCalender className='text-Darkblue w-[24px] h-[24px]' />
-                        <input
-                            type="date"
-                            name="departureDate"
-                            min={formattedToday}
-                            max={formattedNextMonth}
-                            value={localFormData.departureDate}
-                            onChange={handleInputChange}
-                            className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                        />
-                    </div>
-                    <div className='flex items-center bg-white px-3 py-2 rounded-md'>
-                        <GoPeople className='text-Darkblue w-[24px] h-[24px]' />
-                        <input
-                            type="number"
-                            name="guests"
-                            value={localFormData.guests}
-                            onChange={handleInputChange}
-                            placeholder="People"
-                            className='ml-2 outline-none border-none text-sm bg-transparent placeholder-gray-400'
-                        />
-                    </div>
-                    <div className='w-[200px] h-[41px]'>
-                        <button 
-                            onClick={handleSearchClick} 
-                            className='w-full h-full rounded-lg border-2 border-Skyblue bg-Skyblue text-white text-2xl text-center transform transition duration-150 ease-out hover:scale-105 hover:shadow-lg'
-                        >
-                            Search
-                        </button>
-                    </div>
+    // Filter section component
+    const FilterSection = () => (
+        <div className="space-y-6">
+            {/* Search Section */}
+            <div className="space-y-4">
+                <div className="relative">
+                    <input
+                        type="text"
+                        name="fromCity"
+                        value={localFormData.fromCity}
+                        onChange={handleInputChange}
+                        placeholder="From City"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                    />
+                    <CiLocationOn className="absolute right-3 top-3 text-gray-400" />
+                </div>
+
+                <div className="relative">
+                    <input
+                        type="text"
+                        name="toCity"
+                        value={localFormData.toCity}
+                        onChange={handleInputChange}
+                        placeholder="To City"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                    />
+                    <CiLocationOn className="absolute right-3 top-3 text-gray-400" />
+                </div>
+
+                <div className="relative">
+                    <input
+                        type="date"
+                        name="departureDate"
+                        value={localFormData.departureDate}
+                        onChange={handleInputChange}
+                        min={formattedToday}
+                        max={formattedNextMonth}
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                    />
+                    <SlCalender className="absolute right-3 top-3 text-gray-400" />
+                </div>
+
+                <div className="relative">
+                    <input
+                        type="number"
+                        name="guests"
+                        value={localFormData.guests}
+                        onChange={handleInputChange}
+                        placeholder="Number of Guests"
+                        min="1"
+                        max="10"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                    />
+                    <GoPeople className="absolute right-3 top-3 text-gray-400" />
+                </div>
+
+                <button
+                    onClick={handleSearchClick}
+                    className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                    Search
+                </button>
+            </div>
+
+            {/* Duration Filter */}
+            <div>
+                <h3 className="text-lg font-semibold mb-3 dark:text-white">Duration</h3>
+                <div className="space-y-2">
+                    {['1-3 Days', '4-6 Days', '7-9 Days', '10+ Days'].map((duration) => (
+                        <label key={duration} className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={selectedDurations.includes(duration)}
+                                onChange={() => handleDurationChange(duration)}
+                                className="rounded text-blue-500"
+                            />
+                            <span className="text-gray-700 dark:text-gray-300">{duration}</span>
+                        </label>
+                    ))}
                 </div>
             </div>
 
-            <section className='relative'>
-                <div>
-                    <img src={bannerimg} alt="Banner" className="w-full h-auto" />
+            {/* Rating Filter */}
+            <div>
+                <h3 className="text-lg font-semibold mb-3 dark:text-white">Rating</h3>
+                <div className="space-y-2">
+                    {[
+                        { label: '9+ Exceptional', range: [9, 10] },
+                        { label: '8-9 Excellent', range: [8, 9] },
+                        { label: '7-8 Very Good', range: [7, 8] },
+                        { label: '6-7 Good', range: [6, 7] }
+                    ].map((rating) => (
+                        <label key={rating.label} className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={selectedRatings.includes(
+                                    rating.range[0] === 9 ? '9+' : `${rating.range[0]}-${rating.range[1]}`
+                                )}
+                                onChange={() => handleRatingChange(rating.range)}
+                                className="rounded text-blue-500"
+                            />
+                            <span className="text-gray-700 dark:text-gray-300">{rating.label}</span>
+                        </label>
+                    ))}
                 </div>
-                <div className='top-[70px] left-[100px] absolute'>
-                    <h2 className='text-white text-3xl font-bold'>
-                        {formData.toCity ? `${formData.toCity} Packages` : 'All Packages'}
-                    </h2>
-                </div>
+            </div>
+        </div>
+    );
 
-                <div className='absolute top-[240px] left-0 right-0 flex flex-col md:flex-row md:space-x-4 items-start z-10 px-4'>
-                    <div className='w-full md:w-[277px] bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
-                        <p className='text-lg font-semibold'>Filters</p>
-                        <hr className='my-4' />
-                        <h2 className='text-xl font-bold'>Duration (in Nights)</h2>
-                        <div className='mt-5 space-y-3'>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="4N" checked={selectedDurations.includes('4N')} onChange={() => handleDurationChange('4N')} />
-                                <label htmlFor="4N" className='pl-2'>4N</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="5N" checked={selectedDurations.includes('5N')} onChange={() => handleDurationChange('5N')} />
-                                <label htmlFor="5N" className='pl-2'>5N</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="6N" checked={selectedDurations.includes('6N')} onChange={() => handleDurationChange('6N')} />
-                                <label htmlFor="6N" className='pl-2'>6N</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="7N" checked={selectedDurations.includes('7N')} onChange={() => handleDurationChange('7N')} />
-                                <label htmlFor="7N" className='pl-2'>7N</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input type="checkbox" id="8N" checked={selectedDurations.includes('8N')} onChange={() => handleDurationChange('8N')} />
-                                <label htmlFor="8N" className='pl-2'>8N</label>
-                            </div>
-                        </div>
+    // Add package type tabs to the main content area
+    const PackageTypeTabs = () => (
+        <div className="mb-6">
+            <div className="flex space-x-4">
+                {['Group Tour', 'Cruise Packages', 'Family Specials'].map((type) => (
+                    <button
+                        key={type}
+                        onClick={() => handlePackageTypeChange(type)}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                            selectedPackageType === type
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        {type}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
 
-                        <hr className='my-4' />
-                        <h2 className='text-xl font-bold'>Rating</h2>
-                        <div className='mt-5 space-y-3'>
-                            <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="9+"
-                                    checked={selectedRatings.includes('9+')}
-                                    onChange={() => handleRatingChange([9, 10])}
-                                />
-                                <label htmlFor="9+" className='pl-2'>9+ Rating</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="8-9"
-                                    checked={selectedRatings.includes('8-9')}
-                                    onChange={() => handleRatingChange([8, 9])}
-                                />
-                                <label htmlFor="8-9" className='pl-2'>8 to 9 Stars</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="7-8"
-                                    checked={selectedRatings.includes('7-8')}
-                                    onChange={() => handleRatingChange([7, 8])}
-                                />
-                                <label htmlFor="7-8" className='pl-2'>7 to 8 Stars</label>
-                            </div>
-                            <div className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    id="6-7"
-                                    checked={selectedRatings.includes('6-7')}
-                                    onChange={() => handleRatingChange([6, 7])}
-                                />
-                                <label htmlFor="6-7" className='pl-2'>6 to 7 Stars</label>
-                            </div>
+    return (
+        <div className={`min-h-screen ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+            {/* Mobile Filter Button */}
+            <div className="lg:hidden fixed bottom-4 right-4 z-50">
+                <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="bg-blue-500 text-white p-4 rounded-full shadow-lg"
+                >
+                    <FiFilter size={24} />
+                </button>
+            </div>
+
+            {/* Sidebar - Hidden on mobile unless opened */}
+            <div className={`fixed inset-y-0 left-0 transform ${
+                isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } lg:translate-x-0 transition-transform duration-300 ease-in-out z-30 w-64 bg-white dark:bg-gray-800 shadow-lg`}>
+                <div className="p-4">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-bold dark:text-white">Filters</h2>
+                        <div className="flex items-center space-x-4">
+                            <button
+                                onClick={() => setIsDarkMode(!isDarkMode)}
+                                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700"
+                            >
+                                {isDarkMode ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-600" />}
+                            </button>
+                            <button
+                                onClick={() => setIsSidebarOpen(false)}
+                                className="lg:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-700"
+                            >
+                                <IoMdClose className="text-gray-600 dark:text-gray-300" />
+                            </button>
                         </div>
                     </div>
-
-                    <div className='w-full mt-4 md:mt-0 bg-white bg-opacity-90 backdrop-blur-lg border border-gray-300 p-4 rounded-lg shadow-lg'>
-                        <ul className='flex justify-around items-center'>
-                            <li 
-                                onClick={() => handleTabClick("Group Tour")} 
-                                className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Group Tour" ? "text-blue-700" : "text-black"}`}
-                            >
-                                GROUP TOURS
-                            </li>
-                            <li 
-                                onClick={() => handleTabClick("Cruise Packages")} 
-                                className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Cruise Packages" ? "text-blue-700" : "text-black"}`}
-                            >
-                                CRUISE PACKAGES
-                            </li>
-                            <li 
-                                onClick={() => handleTabClick("Family Specials")} 
-                                className={`text-lg font-semibold cursor-pointer ${selectedPackageType === "Family Specials" ? "text-blue-700" : "text-black"}`}
-                            >
-                                FAMILY SPECIALS
-                            </li>
-                        </ul>
-                    </div>
+                    <FilterSection />
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <div className='ml-72 relative z-10 mb-12'>
-                    <div className="container mx-auto px-4 mt-14">
-                        {filteredPackages && filteredPackages.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                {filteredPackages.map((item) => (
-                                    <div
-                                        key={item._id}
-                                        onClick={() => {
-                                            navigate(`/package-detail/${item._id}`, { 
-                                                state: { 
-                                                    price: item.price, 
-                                                    Seatleft: item.Seatleft 
-                                                } 
-                                            });
-                                        }}
-                                        className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-full cursor-pointer"
-                                    >
-                                        {item.imageurl ? (
-                                            <img
-                                                src={`${apiUrl}/${item.imageurl.replace(/\\/g, '/')}`}
-                                                alt={item.title}
-                                                className="w-full h-48 object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-48 bg-gray-200"></div>
-                                        )}
+            {/* Main Content */}
+            <div className="lg:ml-64 p-4 lg:p-6">
+                {/* Add Package Type Tabs */}
+                <PackageTypeTabs />
 
-                                        <div className="p-4 flex flex-col justify-between flex-grow">
-                                            <div>
-                                                <h2 className="text-lg font-semibold text-gray-800">
-                                                    {item.title}
-                                                </h2>
-                                                <p className="text-sm text-gray-600 mb-6">{item.location}</p>
-                                            </div>
+                {/* Overlay for mobile when sidebar is open */}
+                {isSidebarOpen && (
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
 
-                                            <ul className="text-sm text-gray-600 mb-4">
-                                                {item.highlights.map((highlight, idx) => (
-                                                    <li key={idx} className="flex items-center">
-                                                        <span className="mr-2">•</span> {highlight}
-                                                    </li>
-                                                ))}
-                                            </ul>
+                {/* Package grid with loading state and animations */}
+                <AnimatePresence mode="wait">
+                    {isLoading ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex justify-center items-center h-64"
+                        >
+                            <div className="loader">Loading...</div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                        >
+                            {paginatedPackages.map((item) => (
+                                <motion.div
+                                    key={item._id}
+                                    layout
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    whileHover={{ scale: 1.02 }}
+                                    className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+                                >
+                                    {item.imageurl ? (
+                                        <img
+                                            src={`${apiUrl}/${item.imageurl.replace(/\\/g, '/')}`}
+                                            alt={item.title}
+                                            className="w-full h-48 object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-48 bg-gray-200"></div>
+                                    )}
 
-                                            <div className="flex justify-between items-center mt-auto">
-                                                <span className="bg-green-500 text-white text-sm font-medium py-1 px-3 rounded-lg">
-                                                    {item.rating}
-                                                </span>
-                                                <div className="text-right">
-                                                    <p className="text-lg font-bold text-gray-800">
-                                                        {item.currency} {item.price}
-                                                    </p>
-                                                    {item.Seatleft && (
-                                                        <p className="text-sm text-gray-500">
-                                                            {item.Seatleft} seats left
-                                                        </p>
-                                                    )}
-                                                </div>
+                                    <div className="p-4 flex flex-col justify-between flex-grow">
+                                        <div>
+                                            <h2 className="text-lg font-semibold text-gray-800">
+                                                {item.title}
+                                            </h2>
+                                            <p className="text-sm text-gray-600 mb-6">{item.location}</p>
+                                        </div>
+
+                                        <ul className="text-sm text-gray-600 mb-4">
+                                            {item.highlights.map((highlight, idx) => (
+                                                <li key={idx} className="flex items-center">
+                                                    <span className="mr-2">•</span> {highlight}
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <div className="flex justify-between items-center mt-auto">
+                                            <span className="bg-green-500 text-white text-sm font-medium py-1 px-3 rounded-lg">
+                                                {item.rating}
+                                            </span>
+                                            <div className="text-right">
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    {item.currency} {item.price}
+                                                </p>
+                                                {item.SeatLeft !== undefined && (
+                                                    <div className="flex items-center justify-end mt-2">
+                                                        <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+                                                            item.SeatLeft > 10 
+                                                                ? 'bg-green-100 text-green-800' 
+                                                                : item.SeatLeft > 5 
+                                                                    ? 'bg-yellow-100 text-yellow-800' 
+                                                                    : 'bg-red-100 text-red-800'
+                                                        }`}>
+                                                            {item.SeatLeft} seats left
+                                                        </span>
+                                                        {item.SeatLeft <= 5 && (
+                                                            <span className="text-xs text-red-500 font-medium ml-2">
+                                                                Hurry up!
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="flex justify-center items-center w-full h-96 mb-28">
-                                <p className="text-center w-full text-lg sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
-                                    No Packages Available
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </section>
-        </>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Pagination */}
+                {!isLoading && filteredPackages.length > 0 && <Pagination />}
+            </div>
+        </div>
     );
 };
 
