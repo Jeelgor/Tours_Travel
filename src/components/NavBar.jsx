@@ -159,7 +159,7 @@ const NavBar = () => {
                                                         <motion.button
                                                             whileHover={{ scale: 1.02 }}
                                                             whileTap={{ scale: 0.98 }}
-                                                            onClick={() => navigate('/profile')}
+                                                            onClick={() => navigate('/my-profile')}
                                                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center space-x-2"
                                                         >
                                                             <FontAwesomeIcon icon={faUser} />
