@@ -7,7 +7,6 @@ import OtpVerification from "./Authentication/OtpVerification";
 import Homepage from "./pages/Homepage";
 import HomPageData from "./Admin/HomePageData";
 import TourPackages from "./pages/TourPackages";
-// import HomPageData from "./Admin/HomePageData";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import About from "./pages/About";
@@ -20,15 +19,16 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AddTourDetail from "./Admin/AddTourDetail";
 import BookingForm from "./pages/BookingForm";
 import { Elements } from "@stripe/react-stripe-js";
+import AdminDashboard from "./Admin/AdminDashboard";
+import TourDetailsForm from "./Admin/AddTourDetail";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./components/PaymentForm";
 import UserBookingStatus from "./pages/UserBookingStatus";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
-
-// Load your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
 function App() {
   return (
     <Router>
@@ -45,14 +45,15 @@ function MainContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Define routes where the NavBar should not be shown
-  const hideNavBarRoutes = ["/", "/login", "/OtpVerification"];
+  const hideNavBarRoutes = ["/", "/login", "/OtpVerification","/admin"];
+
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token && (location.pathname === "/" || location.pathname === "/login")) {
       navigate("/homepage");
     }
   }, [location, navigate]);
+
   return (
     <>
       <div>
@@ -72,19 +73,16 @@ function MainContent() {
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
           <Route path="/BookingForm" element={<BookingForm />} />
           <Route path="/userbookingstatus" element={<ProtectedRoute><UserBookingStatus /></ProtectedRoute>} />
-          {/* <Route path="/Homepagedata" element={<HomPageData />} /> */}
-          {/* <Route path="/package" element={<Package />} /> */}
-          {/* <Route path="/package/:package-speciality" element={<Package />} /> */}
           <Route path="/package-detail/:pkgId" element={<PackageDetail />} />
           <Route path="/AddPackages" element={<AddPackages />} />
           <Route path="/payment" element={<PaymentForm />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/tour/:pkgId" element={<TourDetailsForm />} />
         </Routes>
-        {/* Conditionally render the NavBar only if the current route is not in hideNavBarRoutes */}
         {!hideNavBarRoutes.includes(location.pathname) && <Footer />}
       </div>
     </>
   );
 }
-
 
 export default App;
