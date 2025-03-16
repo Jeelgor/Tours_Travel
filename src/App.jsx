@@ -26,6 +26,7 @@ import PaymentForm from "./components/PaymentForm";
 import UserBookingStatus from "./pages/UserBookingStatus";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { UserProvider } from "./context/UserContext";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -34,9 +35,11 @@ function App() {
     <Router>
       <Elements stripe={stripePromise}>
         <Analytics />
-        <MainContent />
+        <UserProvider>
+          <MainContent />
+        </UserProvider>
       </Elements>
-      <SpeedInsights/>
+      <SpeedInsights />
     </Router>
   );
 }

@@ -10,7 +10,7 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [numTravellers, setNumTravellers] = useState(1);
-  const { price } = location.state; // Accessing the price from the state
+  const { price, SeatLeft } = location.state; // Accessing the price from the state
   const navigate = useNavigate();
   useEffect(() => {
     const fetchPackageDetail = async () => {
@@ -164,11 +164,15 @@ const PackageDetail = () => {
           <p className="text-lg font-semibold text-blue-500">Total Price</p>
           <p className="text-lg font-semibold text-blue-500">₹{totalPrice}</p>
         </div>
-        <div className="mt-4">
-          <button className="bg-blue-500 text-white w-full py-2 font-semibold text-lg rounded-md hover:bg-blue-600" onClick={handleBooking}>Next: Final Details</button>
-        </div>
-      </section>
-    </div>
+
+        {
+          SeatLeft <= 0 ? <span>Sorry The Package Seat Was Full we will notify when Package will available</span> : <div>
+            <button className="bg-blue-500 text-white w-full py-2 font-semibold text-lg rounded-md hover:bg-blue-600" onClick={handleBooking}>Book Now</button>
+            <span className='text-red-800'>Hurry Up Limited Seats are available {SeatLeft}</span>
+          </div>
+        }
+      </section >
+    </div >
   );
 };
 
