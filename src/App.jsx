@@ -27,6 +27,7 @@ import UserBookingStatus from "./pages/UserBookingStatus";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { UserProvider } from "./context/UserContext";
+import { BookingProvider } from "./context/BookingContext";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -36,7 +37,9 @@ function App() {
       <Elements stripe={stripePromise}>
         <Analytics />
         <UserProvider>
-          <MainContent />
+          <BookingProvider>
+            <MainContent />
+          </BookingProvider>
         </UserProvider>
       </Elements>
       <SpeedInsights />
@@ -48,7 +51,7 @@ function MainContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hideNavBarRoutes = ["/", "/login", "/OtpVerification","/admin"];
+  const hideNavBarRoutes = ["/", "/login", "/OtpVerification", "/admin"];
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");

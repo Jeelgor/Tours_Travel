@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import { FaUsers, FaCalendarAlt, FaEnvelope, FaUser, FaComments } from 'react-icons/fa';
+import { useBooking } from '../context/BookingContext';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -14,6 +15,7 @@ const BookingForm = () => {
     const { price, packageName, packageType, packageId } = location.state;
     const { userId } = useUser();
     const [isLoading, setIsLoading] = useState(false);
+    const { setBookingId } = useBooking();
 
     const [bookingData, setBookingData] = useState({
         name: '',
@@ -24,7 +26,8 @@ const BookingForm = () => {
         toDate: '',
         address: '',
         mobileNumber: '',
-        pincode: ''
+        pincode: '',
+        status: "pending"
     });
 
     const handleChange = (e) => {
@@ -48,10 +51,10 @@ const BookingForm = () => {
         try {
             // Get the auth token from localStorage
             const token = localStorage.getItem('authToken');
-            
+
             // Add token to request headers
             const response = await axios.post(
-                `${apiUrl}/api/book`, 
+                `${apiUrl}/api/book`,
                 bookingDetails,
                 {
                     headers: {
@@ -59,8 +62,8 @@ const BookingForm = () => {
                     }
                 }
             );
-
-            if (response.status === 200) {
+            console.log(response.data, "booking")
+            if (response.status === 201) {
                 toast.success('Booking successful! Redirecting to payment...');
                 setBookingData({
                     name: '',
@@ -71,8 +74,12 @@ const BookingForm = () => {
                     toDate: '',
                     address: '',
                     mobileNumber: '',
-                    pincode: ''
+                    pincode: '',
+                    status: ''
                 });
+                console.log(response.data, 228888)
+                console.log(response.data.bookingId)
+                setBookingId(response.data.bookingId);
                 navigate('/payment', { state: bookingDetails });
             }
         } catch (error) {
@@ -116,7 +123,7 @@ const BookingForm = () => {
                     className="bg-white rounded-2xl shadow-xl p-8"
                 >
                     <h3 className="text-2xl font-bold text-gray-800 mb-6">Personal Details</h3>
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Name Input */}
@@ -320,8 +327,8 @@ const BookingForm = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             className={`w-full py-4 rounded-xl text-white font-semibold text-lg 
-                                ${isLoading 
-                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                ${isLoading
+                                    ? 'bg-gray-400 cursor-not-allowed'
                                     : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
                                 } transition-all duration-200 shadow-lg hover:shadow-xl`}
                         >
