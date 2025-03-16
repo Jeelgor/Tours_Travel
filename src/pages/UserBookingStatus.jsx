@@ -5,6 +5,7 @@ import { FaPlane, FaCreditCard, FaSpinner, FaCheck, FaTimes, FaPrint } from "rea
 import { format } from "date-fns";
 import PrintableBill from '../components/PrintableBill';
 import { useUser } from '../context/UserContext';
+import toast from "react-hot-toast";
 
 
 const UserBookingStatus = () => {
@@ -47,6 +48,94 @@ const UserBookingStatus = () => {
 
         fetchData();
     }, [setUserId]);
+    console.log(payments._id, 2)
+
+    const bookingIds = bookings.map(booking => booking._id);
+    console.log("Extracted Booking IDs:", bookingIds);
+    const handleCancelBooking = async (bookingId) => {
+        // if (!window.confirm("Are you sure you want to cancel this booking?")) {
+        //     return;
+        // }
+
+        try {
+            const response = await axios.post(`${apiUrl}/api/payment/cancel-booking`, {
+                bookingId,
+            });
+
+            toast.custom((t) => (
+                <div
+                    className={`${t.visible ? 'animate-enter' : 'animate-leave'
+                        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                >
+                    <div className="flex-1 w-0 p-4">
+                        <div className="flex items-start">
+                            <div className="flex-shrink-0 pt-0.5">
+                                <FaTimes className="h-10 w-10 text-red-500" />
+                            </div>
+                            <div className="ml-3 flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                    Booking Cancelled
+                                </p>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    {response.data.message}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex border-l border-gray-200">
+                        <button
+                            onClick={() => toast.dismiss(t.id)}
+                            className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-red-600 hover:text-red-500 focus:outline-none"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            ), {
+                duration: 4000,
+                position: 'top-right',
+            });
+
+            setBookings(prev => prev.map(booking =>
+                booking._id === bookingId ? { ...booking, status: "cancelled" } : booking
+            ));
+        } catch (error) {
+            console.error("Error cancelling booking:", error);
+            toast.custom((t) => (
+                <div
+                    className={`${t.visible ? 'animate-enter' : 'animate-leave'
+                        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                >
+                    <div className="flex-1 w-0 p-4">
+                        <div className="flex items-start">
+                            <div className="flex-shrink-0 pt-0.5">
+                                <FaTimes className="h-10 w-10 text-red-500" />
+                            </div>
+                            <div className="ml-3 flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                    Error
+                                </p>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Failed to cancel booking
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex border-l border-gray-200">
+                        <button
+                            onClick={() => toast.dismiss(t.id)}
+                            className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-red-600 hover:text-red-500 focus:outline-none"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            ), {
+                duration: 4000,
+                position: 'top-right',
+            });
+        }
+    };
 
     const userBookings = bookings.filter(booking => booking.userId === userId);
     const userPayments = payments.filter(payment => payment.userId === userId);
@@ -254,8 +343,8 @@ const UserBookingStatus = () => {
                             <button
                                 onClick={() => setActiveTab("bookings")}
                                 className={`py-4 px-2 flex items-center space-x-2 border-b-2 transition-colors duration-200 ${activeTab === "bookings"
-                                        ? "border-blue-500 text-blue-600"
-                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                    ? "border-blue-500 text-blue-600"
+                                    : "border-transparent text-gray-500 hover:text-gray-700"
                                     }`}
                             >
                                 <FaPlane />
@@ -264,8 +353,8 @@ const UserBookingStatus = () => {
                             <button
                                 onClick={() => setActiveTab("payments")}
                                 className={`py-4 px-2 flex items-center space-x-2 border-b-2 transition-colors duration-200 ${activeTab === "payments"
-                                        ? "border-blue-500 text-blue-600"
-                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                    ? "border-blue-500 text-blue-600"
+                                    : "border-transparent text-gray-500 hover:text-gray-700"
                                     }`}
                             >
                                 <FaCreditCard />
@@ -285,13 +374,13 @@ const UserBookingStatus = () => {
                                     exit={{ opacity: 0, x: 20 }}
                                     className="space-y-6"
                                 >
-            {userBookings.length === 0 ? (
+                                    {userBookings.length === 0 ? (
                                         <div className="text-center py-12 text-gray-500">
                                             No bookings found
                                         </div>
                                     ) : (
                                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {userBookings.map(booking => (
+                                            {userBookings.map(booking => (
                                                 <motion.div
                                                     key={booking._id}
                                                     whileHover={{ scale: 1.02 }}
@@ -324,11 +413,52 @@ const UserBookingStatus = () => {
                                                                 {booking.specialRequests}
                                                             </div>
                                                         )}
+                                                        <div className="flex items-center space-x-2 mt-4 p-3 rounded-lg" style={{
+                                                            backgroundColor: booking.status === 'completed' ? '#dcfce7' :
+                                                                booking.status === 'pending' ? '#fef9c3' :
+                                                                    booking.status === 'cancelled' ? '#fee2e2' : '#f3f4f6'
+                                                        }}>
+                                                            <span className={`flex-shrink-0 ${booking.status === 'completed' ? 'text-green-600' :
+                                                                booking.status === 'pending' ? 'text-yellow-600' :
+                                                                    booking.status === 'cancelled' ? 'text-red-600' : 'text-gray-600'
+                                                                }`}>
+                                                                {getStatusIcon(booking.status)}
+                                                            </span>
+                                                            <p className={`font-medium ${booking.status === 'confirmed' ? 'text-green-800' :
+                                                                booking.status === 'pending' ? 'text-yellow-800' :
+                                                                    booking.status === 'cancelled' ? 'text-red-800' : 'text-gray-800'
+                                                                }`}>
+                                                                Status: {booking.status === 'confirmed' ? 'Confirmed' :
+                                                                    booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                                            </p>
+                                                        </div>
+                                                        {userBookings.map((booking) => (
+                                                            <div key={booking._id} className="booking-card">
+                                                                <h3>{booking.tourName}</h3>
+                                                                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                                    </svg>
+                                                                    <span className="font-medium">{booking.numberOfTravelers}</span>
+                                                                    <span>Seats Reserved</span>
+                                                                </div>
+                                                                <button
+                                                                    onClick={() => handleCancelBooking(booking._id)}
+                                                                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent 
+                                                                    text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 
+                                                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 
+                                                                    transition-colors duration-200 ease-in-out shadow-sm"
+                                                                >
+                                                                    <FaTimes className="mr-2 h-4 w-4" />
+                                                                    Cancel Booking
+                                                                </button>
+                                                            </div>
+                                                        ))}
                                                     </div>
                                                 </motion.div>
                                             ))}
-                </div>
-            )}
+                                        </div>
+                                    )}
                                 </motion.div>
                             ) : (
                                 <motion.div
@@ -338,13 +468,13 @@ const UserBookingStatus = () => {
                                     exit={{ opacity: 0, x: 20 }}
                                     className="space-y-6"
                                 >
-            {userPayments.length === 0 ? (
+                                    {userPayments.length === 0 ? (
                                         <div className="text-center py-12 text-gray-500">
                                             No payments found
                                         </div>
                                     ) : (
                                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {userPayments.map(payment => (
+                                            {userPayments.map(payment => (
                                                 <motion.div
                                                     key={payment._id}
                                                     whileHover={{ scale: 1.02 }}

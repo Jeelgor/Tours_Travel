@@ -6,6 +6,7 @@ import axios from 'axios';
 import { FaCreditCard, FaLock, FaCalendarAlt, FaUsers, FaShieldAlt } from 'react-icons/fa';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useUser } from '../context/UserContext';
+import { useBooking } from '../context/BookingContext';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -18,8 +19,9 @@ const PaymentPage = () => {
     const [userEmail, SetEmail] = useState(null);
     const [clientSecret, setClientSecret] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
+    const { bookingId } = useBooking();
     const bookingDetails = location.state || {};
-
+    console.log(bookingId, 22222)
     useEffect(() => {
         const fetchUserDetails = async () => {
             const token = localStorage.getItem("authToken");
@@ -74,8 +76,9 @@ const PaymentPage = () => {
                         packageName: bookingDetails.packageName,
                         status: paymentIntent.status,
                         paymentMethod: paymentIntent.payment_method_types[0],
+                        bookingId,
                     });
-                    
+
                     toast.success("Payment Successful!");
                     navigate("/userbookingstatus");
                 } catch (error) {
@@ -155,7 +158,7 @@ const PaymentPage = () => {
                         <form onSubmit={handlePayment} className="space-y-4 md:space-y-6">
                             <div className="space-y-4 md:space-y-6">
                                 <div className="p-3 md:p-4 bg-gray-50 rounded-lg">
-                                    <CardElement 
+                                    <CardElement
                                         options={{
                                             ...cardStyle,
                                             style: {
@@ -165,8 +168,8 @@ const PaymentPage = () => {
                                                     fontSize: window.innerWidth < 768 ? '14px' : '16px',
                                                 }
                                             }
-                                        }} 
-                                        className="py-2 md:py-4" 
+                                        }}
+                                        className="py-2 md:py-4"
                                     />
                                 </div>
                             </div>
@@ -178,7 +181,7 @@ const PaymentPage = () => {
                                 whileTap={{ scale: 0.99 }}
                                 className={`w-full py-3 md:py-4 rounded-xl text-white font-semibold text-sm md:text-lg 
                                     ${(!stripe || !clientSecret || isProcessing)
-                                        ? 'bg-gray-400 cursor-not-allowed' 
+                                        ? 'bg-gray-400 cursor-not-allowed'
                                         : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700'
                                     } transition-all duration-200 shadow-lg hover:shadow-xl`}
                             >
