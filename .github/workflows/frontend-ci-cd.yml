@@ -3,56 +3,38 @@ name: Frontend CI/CD
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
 
 jobs:
-  build-and-test:
+  build-deploy:
+    name: Build and Deploy Frontend to Vercel
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-    - name: Install Dependencies
-      working-directory: ./frontend
-      run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Run Tests
-      working-directory: ./frontend
-      run: npm test
+      - name: Lint Code
+        run: npm run lint
 
-    - name: Build
-      working-directory: ./frontend
-      run: npm run build
+      - name: Run Tests
+        run: npm test
 
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+      - name: Build Frontend
+        run: npm run build
 
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Install Vercel CLI
-      run: npm install --global vercel@latest
-
-    - name: Pull Vercel Environment Information
-      working-directory: ./frontend
-      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-    - name: Build Project Artifacts
-      working-directory: ./frontend
-      run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-    - name: Deploy Project Artifacts to Vercel
-      working-directory: ./frontend
-      run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npx vercel --prod --confirm --token=$VERCEL_TOKEN --project=$VERCEL_PROJECT_ID --org=$VERCEL_ORG_ID
