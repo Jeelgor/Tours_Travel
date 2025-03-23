@@ -11,8 +11,8 @@ const SignUpUser = () => {
     const [FirstName, SetFirstName] = useState("");
     const [LastName, SetLastName] = useState("");
     const [Email, SetEmail] = useState("");
-    const [Password, SetPassword] = useState("");
-    const [ConfirmPassword, SetConfirmPassword] = useState("");
+    const [Password, SetfirstPassword] = useState("");
+    const [SetPassword, SetConfirmPassword] = useState("");
     const [Address, SetAddress] = useState("");
     const [MobileNumber, SetMobileNumber] = useState("");
     const [Pincode, SetPincode] = useState("");
@@ -23,7 +23,7 @@ const SignUpUser = () => {
         event.preventDefault();
         setIsLoading(true);
 
-        if (Password !== ConfirmPassword) {
+        if (Password !== SetPassword) {
             toast.error("Passwords do not match");
             setIsLoading(false);
             return;
@@ -35,6 +35,7 @@ const SignUpUser = () => {
                 LastName,
                 Email,
                 Password,
+                SetPassword,
                 Address,
                 MobileNumber,
                 Pincode
@@ -42,7 +43,7 @@ const SignUpUser = () => {
 
             if (response.data) {
                 toast.success("Registration successful! Please check your email for OTP");
-                setTimeout(() => navigate("/otp-verification"), 1500);
+                setTimeout(() => navigate("/login"), 1500);
             }
         } catch (err) {
             console.error("Registration error:", err);
@@ -169,7 +170,7 @@ const SignUpUser = () => {
                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all text-sm sm:text-base group-hover:bg-white/30"
                                     placeholder="Password"
                                     value={Password}
-                                    onChange={(e) => SetPassword(e.target.value)}
+                                    onChange={(e) => SetfirstPassword(e.target.value)}
                                 />
                             </div>
                         </motion.div>
@@ -185,7 +186,7 @@ const SignUpUser = () => {
                                     type="password"
                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all text-sm sm:text-base group-hover:bg-white/30"
                                     placeholder="Confirm Password"
-                                    value={ConfirmPassword}
+                                    value={SetPassword}
                                     onChange={(e) => SetConfirmPassword(e.target.value)}
                                 />
                             </div>

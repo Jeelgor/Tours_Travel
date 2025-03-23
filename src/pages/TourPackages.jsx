@@ -221,7 +221,7 @@ const TourPackages = () => {
                             {currentPackages.map(item => (
                                 <div
                                     key={item._id}
-                                    onClick={() => navigate(`/package-detail/${item._id}`, { state: { price: item.price, SeatLeft: item.SeatLeft } })}
+                                    onClick={() => navigate(`/package-detail/${item._id}`, { state: { price: item.price, Seatleft: item.Seatleft } })}
                                     className="bg-white shadow-md rounded-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
                                 >
                                     <img
@@ -241,9 +241,9 @@ const TourPackages = () => {
                                             <span className="bg-green-500 text-white text-xs py-1 px-2 rounded">{item.rating}</span>
                                             <div className="text-right">
                                                 <p className="text-md font-bold">{item.currency} {item.price}</p>
-                                                {item.SeatLeft && (
-                                                    <span className={`text-xs ${item.SeatLeft > 10 ? 'text-green-600' : item.SeatLeft > 5 ? 'text-yellow-600' : 'text-red-600'}`}>
-                                                        {item.SeatLeft} seats left
+                                                {item.Seatleft && (
+                                                    <span className={`text-xs ${item.Seatleft > 10 ? 'text-green-600' : item.Seatleft > 5 ? 'text-yellow-600' : 'text-red-600'}`}>
+                                                        {item.Seatleft} seats left
                                                     </span>
                                                 )}
                                             </div>

@@ -16,11 +16,9 @@ import MyProfile from "./pages/MyProfile";
 import MyPackage from "./pages/MyPackage";
 import AddPackages from "./Admin/AddTourpackages";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AddTourDetail from "./Admin/AddTourDetail";
 import BookingForm from "./pages/BookingForm";
 import { Elements } from "@stripe/react-stripe-js";
 import AdminDashboard from "./Admin/AdminDashboard";
-import TourDetailsForm from "./Admin/AddTourDetail";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./components/PaymentForm";
 import UserBookingStatus from "./pages/UserBookingStatus";
@@ -28,6 +26,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { UserProvider } from "./context/UserContext";
 import { BookingProvider } from "./context/BookingContext";
+import AddTourDetail from "./Admin/AddTourDetail";
+import UpdateTour from "./Admin/UpdateTour";
+import UpdateTourDetail from "./Admin/UpdateTour";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -77,13 +78,13 @@ function MainContent() {
           <Route path="/my-profile" element={<MyProfile />} />
           <Route path="/my-package" element={<MyPackage />} />
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
+          <Route path="/UpdateTour" element={<UpdateTourDetail />} />
           <Route path="/BookingForm" element={<BookingForm />} />
           <Route path="/userbookingstatus" element={<ProtectedRoute><UserBookingStatus /></ProtectedRoute>} />
           <Route path="/package-detail/:pkgId" element={<PackageDetail />} />
           <Route path="/AddPackages" element={<AddPackages />} />
           <Route path="/payment" element={<PaymentForm />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/tour/:pkgId" element={<TourDetailsForm />} />
         </Routes>
         {!hideNavBarRoutes.includes(location.pathname) && <Footer />}
       </div>

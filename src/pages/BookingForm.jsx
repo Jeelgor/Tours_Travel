@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,17 +6,20 @@ import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import { FaUsers, FaCalendarAlt, FaEnvelope, FaUser, FaComments } from 'react-icons/fa';
 import { useBooking } from '../context/BookingContext';
+import useSocket from '../hooks/useSocket';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const BookingForm = () => {
+const BookingForm = ({ _id }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { price, packageName, packageType, packageId } = location.state;
     const { userId } = useUser();
     const [isLoading, setIsLoading] = useState(false);
     const { setBookingId } = useBooking();
-
+    const { Seatleft } = useSocket();
+    const [tourSeats, setTourSeats] = useState(null);
+    const [TotalAmount, SetTotalAmout] = useState();
     const [bookingData, setBookingData] = useState({
         name: '',
         email: '',
@@ -27,14 +30,23 @@ const BookingForm = () => {
         address: '',
         mobileNumber: '',
         pincode: '',
+        TotalAmount,
         status: "pending"
     });
-
+    useEffect(() => {
+        if (Seatleft[_id] !== undefined) {
+            setTourSeats(Seatleft[_id]);
+            console.log("Id of seat bookers", _id)
+        }
+    }, [Seatleft, _id]);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setBookingData({ ...bookingData, [name]: value });
     };
-
+    useEffect(() => {
+        SetTotalAmout(price * bookingData.numberOfTravelers);
+        console.log(TotalAmount)
+    })
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -315,7 +327,7 @@ const BookingForm = () => {
                                 </div>
                                 <div className="flex justify-between font-semibold text-lg pt-2 border-t">
                                     <span>Total Amount</span>
-                                    <span className="text-blue-600">₹{price * bookingData.numberOfTravelers}</span>
+                                    <span className="text-blue-600">₹{TotalAmount}</span>
                                 </div>
                             </div>
                         </div>

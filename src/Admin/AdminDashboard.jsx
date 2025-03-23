@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 const AdminDashboard = () => {
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
                     <div
                         key={tour._id}
                         className="bg-white p-4 rounded-lg shadow-md transform hover:scale-105 transition duration-300 cursor-pointer"
-                        onClick={() => navigate(`/admin/tour/${tour._id}`,{ state: { price: tour.price, SeatLeft: tour.SeatLeft }})}
+                        onClick={() => navigate(`/UpdateTour?pkgId=${tour._id}`, { state: { price: tour.price, SeatLeft: tour.SeatLeft } })}
                     >
                         <img
                             src={tour.imageurl ? `${apiUrl}/${tour.imageurl.replace(/\\/g, '/')}` : ''}
