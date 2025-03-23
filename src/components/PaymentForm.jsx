@@ -21,7 +21,7 @@ const PaymentPage = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const { bookingId } = useBooking();
     const bookingDetails = location.state || {};
-    console.log(bookingId, 22222)
+    console.log(bookingDetails, 88888)
     useEffect(() => {
         const fetchUserDetails = async () => {
             const token = localStorage.getItem("authToken");
@@ -136,12 +136,12 @@ const PaymentPage = () => {
                             <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 md:p-4">
                                 <FaCalendarAlt className="text-white mb-2 text-lg md:text-xl" />
                                 <p className="text-blue-100 text-sm">Number of Travelers</p>
-                                <p className="text-base md:text-xl font-semibold text-white">{bookingDetails.numTravellers}</p>
+                                <p className="text-base md:text-xl font-semibold text-white">{bookingDetails.numberOfTravelers}</p>
                             </div>
                             <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 md:p-4">
                                 <FaCreditCard className="text-white mb-2 text-lg md:text-xl" />
                                 <p className="text-blue-100 text-sm">Total Amount</p>
-                                <p className="text-lg md:text-2xl font-semibold text-white">₹{bookingDetails.price}</p>
+                                <p className="text-lg md:text-2xl font-semibold text-white">₹{bookingDetails.price * bookingDetails.numberOfTravelers}</p>
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@ const PaymentPage = () => {
                                         <span className="text-sm md:text-base">Processing...</span>
                                     </div>
                                 ) : (
-                                    `Pay ₹${bookingDetails.price}`
+                                    `Pay ₹${bookingDetails.price * bookingDetails.numberOfTravelers}`
                                 )}
                             </motion.button>
                         </form>
