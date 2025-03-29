@@ -1,12 +1,18 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const TopPackage = () => {
 
-  const { topPackages } = useContext(AppContext);
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const [packages, setPackages] = useState([]);
 
+  useEffect(() => {
+    axios.get(`${apiUrl}/Auth/users/getTourPackages`)
+      .then((result) => setPackages(result.data))
+      .catch(err => console.error("Error fetching packages:", err));
+  }, []);
   return (
     <>
       <div className='mt-32 text-center'>
@@ -15,9 +21,9 @@ const TopPackage = () => {
       </div>
       <div className="container mx-auto px-4 mt-14">
         {/* Conditional Rendering: If topPackages exists and has items, show the grid, otherwise show centered text */}
-        {topPackages && topPackages.length > 0 ? (
+        {packages && packages.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {topPackages.map((item) => (
+            {packages.slice(0, 10).map((item) => (
               <div
                 key={item._id}
                 onClick={() => {
@@ -27,9 +33,9 @@ const TopPackage = () => {
               >
                 {/* Image */}
                 <img
-                  src={item.image}
+                  src={item.imageurl ? `${apiUrl}/${item.imageurl.replace(/\\/g, '/')}` : "https://via.placeholder.com/150"}
                   alt={item.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-40 object-cover"
                 />
 
                 {/* Card Content */}

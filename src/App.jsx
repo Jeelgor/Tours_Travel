@@ -29,6 +29,7 @@ import { BookingProvider } from "./context/BookingContext";
 import AddTourDetail from "./Admin/AddTourDetail";
 import UpdateTour from "./Admin/UpdateTour";
 import UpdateTourDetail from "./Admin/UpdateTour";
+import AdminBookings from "./Admin/AdminBookings";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -52,7 +53,7 @@ function MainContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hideNavBarRoutes = ["/", "/login", "/OtpVerification", "/admin"];
+  const hideNavBarRoutes = ["/", "/login", "/OtpVerification", "/admin", "/usersbookings"];
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -85,6 +86,7 @@ function MainContent() {
           <Route path="/AddPackages" element={<AddPackages />} />
           <Route path="/payment" element={<PaymentForm />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/usersbookings" element={<AdminBookings />} />
         </Routes>
         {!hideNavBarRoutes.includes(location.pathname) && <Footer />}
       </div>

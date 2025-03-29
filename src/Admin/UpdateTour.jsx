@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
     _id: "",
@@ -42,6 +43,7 @@ const UpdateTourDetail = () => {
                 .catch((error) => {
                     console.error("Error fetching tour details:", error);
                     toast.error("Failed to fetch tour details");
+                    navigate("/AddTourDetail")
                 });
         }
     }, [pkgId, apiUrl]);
@@ -153,8 +155,8 @@ const UpdateTourDetail = () => {
                 submitFormData.append("gallery", image);
             });
 
-            await axios.post(
-                `${apiUrl}/api/tours/admin/updatetourdetails/${pkgId}`,
+            await axios.put(
+                `${apiUrl}/Auth/users/admin/updatetourdetails/?pkgId=${pkgId}`,
                 submitFormData,
                 {
                     headers: {
@@ -163,12 +165,10 @@ const UpdateTourDetail = () => {
                     },
                 }
             );
-            toast.success("Tour package updated successfully!");
-            navigate("/admin/tours"); // Redirect back to Admin Dashboard
+            toast("Tour package updated successfully!");
         } catch (error) {
             console.error("Error updating tour package:", error);
-            toast.error(
-                error.response?.data?.message || "Error updating tour package"
+            toast(error.response?.data?.message || "Error updating tour package"
             );
         } finally {
             setLoading(false);
@@ -405,6 +405,18 @@ const UpdateTourDetail = () => {
                     {loading ? "Updating..." : "Update Tour Package"}
                 </button>
             </form>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
         </div>
     );
 };
