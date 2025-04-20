@@ -1,87 +1,123 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddPackages = () => {
-    const [packages, setPackages] = useState([]);
-    const [images, setImages] = useState([]);
-    const [message, setMessage] = useState('');
+const AddTourPackages = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const [formData, setFormData] = useState({
+        _id: '',
+        title: '',
+        location: '',
+        imageurl: '',
+        highlights: '',
+        rating: '',
+        price: '',
+        currency: 'INR',
+        Seatleft: 10,
+    });
 
-    const handlePackagesChange = (e) => {
-        const value = e.target.value;
-        try {
-            const parsedPackages = JSON.parse(value);
-            setPackages(parsedPackages);
-        } catch (error) {
-            console.log(error);
-            setMessage("Invalid JSON format.");
-        }
+    const [imageFile, setImageFile] = useState(null);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const handleImagesChange = (e) => {
-        setImages(Array.from(e.target.files)); // Convert FileList to Array
+    const handleHighlightsChange = (e) => {
+        setFormData({ ...formData, highlights: e.target.value.split(',') });
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setImageFile(file);
+    };
+
+    const uploadImage = async () => {
+        if (!imageFile) return null;
+
+        const formData = new FormData();
+        formData.append('file', imageFile);
+
+        try {
+            const response = await axios.post(`${apiUrl}/api/upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return response.data.imageUrl; // Assuming backend returns the image URL
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            return null;
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('packages', JSON.stringify(packages));
+        console.log('Form submitted:', formData);
 
-        images.forEach((image) => {
-            formData.append('imageurl', image);
-        });
+        const uploadedImageUrl = await uploadImage();
+        if (!uploadedImageUrl) {
+            console.error('Image upload failed');
+            return;
+        }
+
+        const finalData = { ...formData, imageurl: uploadedImageUrl };
 
         try {
-            const response = await axios.post('http://localhost:3000/Auth/users/Addpackages', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            setMessage(response.data.msg);
+            const response = await axios.post(`${apiUrl}/api/tours/admin/tourpackagesadd`, finalData);
+            console.log('Response:', response.data);
         } catch (error) {
-            setMessage("Failed to upload packages.");
-            console.error(error);
+            console.error('Error submitting form:', error);
         }
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Add Tour Packages</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="packages" className="block text-gray-700 font-bold mb-2">
-                        Packages (JSON format):
-                    </label>
-                    <textarea
-                        id="packages"
-                        rows="4"
-                        onChange={handlePackagesChange}
-                        placeholder='Enter package details in JSON format: [{"title": "Tour 1", "location": "Paris"}, {"title": "Tour 2", "location": "London"}]'
-                        className="border border-gray-300 rounded-md p-2 w-full"
-                    />
+        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Add Tour Package</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium">Package ID</label>
+                    <input type="text" name="_id" value={formData._id} onChange={handleChange} className="w-full p-2 border rounded" required />
                 </div>
-                <div className="mb-4">
-                    <label htmlFor="images" className="block text-gray-700 font-bold mb-2">
-                        Upload Images:
-                    </label>
-                    <input
-                        type="file"
-                        id="images"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImagesChange}
-                        className="border border-gray-300 rounded-md p-2 w-full"
-                    />
+                <div>
+                    <label className="block text-sm font-medium">Title</label>
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full p-2 border rounded" required />
                 </div>
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md"
-                >
+                <div>
+                    <label className="block text-sm font-medium">Location</label>
+                    <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" required />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Upload Image</label>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="w-full p-2 border rounded" required />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Highlights (comma-separated)</label>
+                    <input type="text" name="highlights" value={formData.highlights} onChange={handleHighlightsChange} className="w-full p-2 border rounded" required />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Rating</label>
+                    <input type="number" name="rating" value={formData.rating} onChange={handleChange} className="w-full p-2 border rounded" required />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Price</label>
+                    <input type="text" name="price" value={formData.price} onChange={handleChange} className="w-full p-2 border rounded" required />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Currency</label>
+                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full p-2 border rounded">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="INR">INR</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Seats Left</label>
+                    <input type="number" name="Seatleft" value={formData.Seatleft} min="0" onChange={handleChange} className="w-full p-2 border rounded" required />
+                </div>
+                <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
                     Submit
                 </button>
             </form>
-            {message && <p className="mt-4 text-center text-red-500">{message}</p>}
         </div>
     );
 };
 
-export default AddPackages;
+export default AddTourPackages;

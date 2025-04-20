@@ -64,25 +64,24 @@ const NavBar = () => {
     ];
 
     return (
-        <motion.nav 
+        <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                isScrolled 
-                    ? 'bg-white shadow-lg' 
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                    ? 'bg-white shadow-lg'
                     : 'bg-white/95 backdrop-blur-md'
-            }`}
+                }`}
         >
             <div className='px-4 py-2 mx-4 sm:mx-[4%]'>
                 <div className='flex justify-between items-center'>
                     {/* Logo */}
-                    <motion.div 
+                    <motion.div
                         whileHover={{ scale: 1.05 }}
                         className='w-[7vmin] sm:w-[6vmin] cursor-pointer'
                     >
-                        <img 
-                            onClick={() => navigate('/homepage')} 
-                            src="icon.jpg" 
+                        <img
+                            onClick={() => navigate('/homepage')}
+                            src="icon.jpg"
                             alt="Logo"
                             className='rounded-full'
                         />
@@ -154,7 +153,7 @@ const NavBar = () => {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div className="space-y-2">
                                                         <motion.button
                                                             whileHover={{ scale: 1.02 }}
@@ -165,7 +164,7 @@ const NavBar = () => {
                                                             <FontAwesomeIcon icon={faUser} />
                                                             <span>My Profile</span>
                                                         </motion.button>
-                                                        
+
                                                         <motion.button
                                                             whileHover={{ scale: 1.02 }}
                                                             whileTap={{ scale: 0.98 }}
@@ -200,8 +199,8 @@ const NavBar = () => {
                             onClick={navBarToggle}
                             className="sm:hidden"
                         >
-                            <FontAwesomeIcon 
-                                icon={isNavOpen ? faXmark : faBars} 
+                            <FontAwesomeIcon
+                                icon={isNavOpen ? faXmark : faBars}
                                 className="w-5 h-5 text-gray-700"
                             />
                         </motion.button>
@@ -229,8 +228,8 @@ const NavBar = () => {
                                     <FontAwesomeIcon icon={faXmark} className="w-6 h-6" />
                                 </motion.button>
                             </div>
-                            
-                            <motion.div 
+
+                            <motion.div
                                 className="flex flex-col space-y-4 p-4"
                                 initial="closed"
                                 animate="open"
@@ -255,8 +254,7 @@ const NavBar = () => {
                                             to={item.path}
                                             onClick={navBarToggle}
                                             className={({ isActive }) =>
-                                                `block py-2 text-lg font-medium ${
-                                                    isActive ? 'text-blue-600' : 'text-gray-700'
+                                                `block py-2 text-lg font-medium ${isActive ? 'text-blue-600' : 'text-gray-700'
                                                 }`
                                             }
                                         >

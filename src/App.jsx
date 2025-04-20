@@ -30,6 +30,8 @@ import AddTourDetail from "./Admin/AddTourDetail";
 import UpdateTour from "./Admin/UpdateTour";
 import UpdateTourDetail from "./Admin/UpdateTour";
 import AdminBookings from "./Admin/AdminBookings";
+import UpdateTourPackages from "./Admin/UpdateTourPackages";
+import AdminSignUpUser from "./Admin/Adminauth";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -87,6 +89,8 @@ function MainContent() {
           <Route path="/payment" element={<PaymentForm />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/usersbookings" element={<AdminBookings />} />
+          <Route path="/updateTourpkg" element={<UpdateTourPackages />} />
+          <Route path="/adminauth" element={<AdminSignUpUser />} />
         </Routes>
         {!hideNavBarRoutes.includes(location.pathname) && <Footer />}
       </div>

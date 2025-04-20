@@ -139,7 +139,15 @@ const UserBookingStatus = () => {
 
     const userBookings = bookings.filter(booking => booking.userId === userId);
     const userPayments = payments.filter(payment => payment.userId === userId);
-
+    const aggregatedBookings = userBookings.reduce((acc, booking) => {
+        const key = booking.tourId || booking.tourName; 
+        if (!acc[key]) {
+            acc[key] = { ...booking }; 
+        } else {
+            acc[key].numberOfTravelers += booking.numberOfTravelers; 
+        }
+        return acc;
+    }, {});
     const getStatusIcon = (status) => {
         switch (status?.toLowerCase()) {
             case 'completed':
@@ -432,7 +440,7 @@ const UserBookingStatus = () => {
                                                                     booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                                                             </p>
                                                         </div>
-                                                        {userBookings.map((booking) => (
+                                                        {Object.values(aggregatedBookings).map((booking) => (
                                                             <div key={booking._id} className="booking-card">
                                                                 <h3>{booking.tourName}</h3>
                                                                 <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -454,6 +462,7 @@ const UserBookingStatus = () => {
                                                                 </button>
                                                             </div>
                                                         ))}
+
                                                     </div>
                                                 </motion.div>
                                             ))}

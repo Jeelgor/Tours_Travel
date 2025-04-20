@@ -118,10 +118,7 @@ const TourPackages = () => {
             <div className="bg-blue-900 p-4 md:p-6 shadow-md mt-12">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-4 items-center">
                     {[
-                        { icon: <CiLocationOn className="w-6 h-6 text-white" />, name: "fromCity", placeholder: "From City" },
                         { icon: <CiLocationOn className="w-6 h-6 text-white" />, name: "toCity", placeholder: "To City" },
-                        { icon: <SlCalender className="w-6 h-6 text-white" />, name: "departureDate", type: "date", min: formattedToday, max: formattedNextMonth },
-                        { icon: <GoPeople className="w-6 h-6 text-white" />, name: "guests", type: "number", placeholder: "Guests" },
                     ].map((field, idx) => (
                         <div key={idx} className="flex items-center bg-white rounded-md p-2 w-full md:flex-1">
                             {field.icon}
@@ -166,9 +163,8 @@ const TourPackages = () => {
                     >
                         {isFilterOpen ? "Hide Filters" : "Show Filters"}
                     </button>
-                    <div className={`${
-                        isFilterOpen ? "block bg-white" : "hidden"
-                    } md:block bg-white p-4 rounded-md shadow-md`}>
+                    <div className={`${isFilterOpen ? "block bg-white" : "hidden"
+                        } md:block bg-white p-4 rounded-md shadow-md`}>
                         <h3 className="text-lg font-semibold">Filters</h3>
                         <hr className="my-4" />
                         <h4 className="text-md font-bold">Duration (in Nights)</h4>
