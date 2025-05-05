@@ -33,7 +33,7 @@ const TopPackage = () => {
               >
                 {/* Image */}
                 <img
-                  src={item.imageurl ? `${apiUrl}/${item.imageurl.replace(/\\/g, '/')}` : "https://via.placeholder.com/150"}
+                  src={item.imageurl ? `${item.imageurl.replace(/\\/g, '/')}` : "https://via.placeholder.com/150"}
                   alt={item.title}
                   className="w-full h-40 object-cover"
                 />
