@@ -34,7 +34,6 @@ const UpdateTourDetail = () => {
                 .get(`${apiUrl}/Auth/users/getTourDetailPackages/${pkgId}`)
                 .then((response) => {
                     const data = response.data;
-                    console.log(data, 222)
                     setFormData({
                         ...initialState,
                         ...data,

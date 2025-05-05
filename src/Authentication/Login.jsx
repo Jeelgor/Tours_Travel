@@ -49,7 +49,6 @@ const Login = () => {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log("Protected route response:", response.data);
       } catch (error) {
         console.error("Access error:", error);
       }

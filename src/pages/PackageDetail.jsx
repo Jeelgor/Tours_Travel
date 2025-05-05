@@ -41,8 +41,6 @@ const PackageDetail = () => {
   };
   const newprice = getNumericPrice(price);
   const totalPrice = newprice * numTravellers;
-  console.log('Price from location state:', location.state?.price);
-
 
   const handleBooking = () => {
     navigate("/BookingForm", {

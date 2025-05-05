@@ -32,7 +32,6 @@ const UpdateTourPackages = () => {
                 .get(`${apiUrl}/api/tours/admin/gettourpackages?pkgId=${pkgId}`)
                 .then((response) => {
                     const data = response.data;
-                    console.log("Fetched data:", data);
                     setFormData({
                         ...initialState,
                         ...data,
@@ -64,6 +63,7 @@ const UpdateTourPackages = () => {
         const file = e.target.files[0];
         setImageFile(file);
     };
+    const normalizedImageUrl = formData.imageurl?.replace(/\\/g, '/');
 
     // Function to upload new image and get URL
     const handleSubmit = async (e) => {
@@ -86,7 +86,6 @@ const UpdateTourPackages = () => {
             if (imageFile) {
                 submitFormData.append("imageurl", imageFile);
             }
-            console.log("Sending FormData:", submitFormData.get("imageurl")); // 🛠 Debugging Step
             // Send API request in one go
             await axios.put(
                 `${apiUrl}/Auth/users/admin/updatetourdetails/?pkgId=${pkgId}`,
@@ -108,8 +107,6 @@ const UpdateTourPackages = () => {
         }
     };
 
-    console.log(imageFile,72283838);
-    console.log("🛠 Final Data Sent:", JSON.stringify(formData, null, 2));
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h2 className="text-3xl font-bold mb-8 text-center">Update Tour Package</h2>
@@ -221,7 +218,7 @@ const UpdateTourPackages = () => {
                         {formData.imageurl && !imageFile && (
                             <div className="mt-2">
                                 <img
-                                    src={formData.imageurl}
+                                    src={`${normalizedImageUrl}`}
                                     alt="Current"
                                     className="w-32 h-32 object-cover rounded"
                                 />

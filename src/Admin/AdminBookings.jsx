@@ -11,8 +11,6 @@ const AdminBookings = () => {
         setLoading(true);
         try {
             const response = await axios.get("http://localhost:3000/api/bookings");
-            console.log("✅ API Response:", response.data);
-            // If the response data is wrapped in an object, extract the data array
             const fetchedBookings =
                 response.data && Array.isArray(response.data.data)
                     ? response.data.data
@@ -47,12 +45,10 @@ const AdminBookings = () => {
 
 
             if (expiredBooking) {
-                console.log("⏳ Expired booking found:", expiredBooking._id);
                 try {
                     await axios.post("http://localhost:3000/api/api/cancel-expired-bookings", {
                         bookingId: expiredBooking._id,
                     });
-                    console.log("✅ Expired booking canceled:", expiredBooking._id);
                     await fetchBookings();
                 } catch (err) {
                     console.error("❌ Error canceling expired booking:", err);

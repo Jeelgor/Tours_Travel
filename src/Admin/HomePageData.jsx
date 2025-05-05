@@ -27,7 +27,6 @@ const Admin = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response.data);
             toast.success('Tour added successfully!'); // Success toast
             // Reset form fields
             setTourName('');

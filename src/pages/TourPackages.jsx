@@ -203,7 +203,6 @@ const TourPackages = () => {
                         {["Group Tour", "Cruise Packages", "Family Specials"].map(type => (
                             <li
                                 key={type}
-                                onClick={() => handleTabClick(type)}
                                 className={`text-sm md:text-lg font-semibold cursor-pointer p-2 ${selectedPackageType === type ? "text-blue-700 border-b-2 border-blue-700" : "text-gray-700"}`}
                             >
                                 {type.toUpperCase()}
@@ -221,16 +220,18 @@ const TourPackages = () => {
                                     className="bg-white shadow-md rounded-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
                                 >
                                     <img
-                                        src={item.imageurl ? `${apiUrl}/${item.imageurl.replace(/\\/g, '/')}` : "https://via.placeholder.com/150"}
+                                        src={item.imageurl ? `${item.imageurl.replace(/\\/g, '/')}` : "https://via.placeholder.com/150"}
                                         alt={item.title}
                                         className="w-full h-40 object-cover"
                                     />
                                     <div className="p-4">
                                         <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
                                         <p className="text-sm text-gray-600">{item.location}</p>
-                                        <ul className="text-sm text-gray-600 my-2">
-                                            {item.highlights.map((highlight, idx) => (
-                                                <li key={idx} className="flex items-center"><span className="mr-1">•</span>{highlight}</li>
+                                        <ul className="text-sm text-gray-600 my-2 list-disc pl-5 space-y-1">
+                                            {item.highlights.flatMap((highlight) =>
+                                                highlight.split(',').map((point) => point.trim())
+                                            ).map((point, idx) => (
+                                                <li key={idx}>{point}</li>
                                             ))}
                                         </ul>
                                         <div className="flex justify-between items-center">

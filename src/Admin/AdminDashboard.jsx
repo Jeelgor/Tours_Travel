@@ -81,7 +81,7 @@ const AdminDashboard = () => {
                                 className="bg-white p-4 rounded-lg shadow-md transform hover:scale-105 transition duration-300 cursor-pointer"
                             >
                                 <img
-                                    src={tour.imageurl ? `${apiUrl}/${tour.imageurl.replace(/\\/g, "/")}` : ""}
+                                    src={tour.imageurl ? `${tour.imageurl.replace(/\\/g, "/")}` : ""}
                                     alt={tour.title}
                                     className="h-40 w-full object-cover rounded-md"
                                 />

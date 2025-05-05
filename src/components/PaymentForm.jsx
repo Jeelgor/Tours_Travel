@@ -21,7 +21,6 @@ const PaymentPage = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const { bookingId } = useBooking();
     const bookingDetails = location.state || {};
-    console.log(bookingDetails, 88888)
     useEffect(() => {
         const fetchUserDetails = async () => {
             const token = localStorage.getItem("authToken");

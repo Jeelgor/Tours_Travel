@@ -15,7 +15,6 @@ export default function useSocket() {
         });
 
         newSocket.on("updateSeats", (data) => {
-            console.log("Seats updated:", data);
             setSeatleft((prev) => ({ ...prev, [data._id]: data.Seatleft }));
         });
 

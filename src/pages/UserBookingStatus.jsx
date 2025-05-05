@@ -36,9 +36,6 @@ const UserBookingStatus = () => {
                 setBookings(bookingsRes.data.data);
                 setPayments(paymentsRes.data.data);
 
-                console.log('User ID:', userRes.data._id);
-                console.log('Bookings:', bookingsRes.data.data);
-                console.log('Payments:', paymentsRes.data.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -48,10 +45,8 @@ const UserBookingStatus = () => {
 
         fetchData();
     }, [setUserId]);
-    console.log(payments._id, 2)
 
     const bookingIds = bookings.map(booking => booking._id);
-    console.log("Extracted Booking IDs:", bookingIds);
     const handleCancelBooking = async (bookingId) => {
         // if (!window.confirm("Are you sure you want to cancel this booking?")) {
         //     return;
@@ -140,11 +135,11 @@ const UserBookingStatus = () => {
     const userBookings = bookings.filter(booking => booking.userId === userId);
     const userPayments = payments.filter(payment => payment.userId === userId);
     const aggregatedBookings = userBookings.reduce((acc, booking) => {
-        const key = booking.tourId || booking.tourName; 
+        const key = booking.tourId || booking.tourName;
         if (!acc[key]) {
-            acc[key] = { ...booking }; 
+            acc[key] = { ...booking };
         } else {
-            acc[key].numberOfTravelers += booking.numberOfTravelers; 
+            acc[key].numberOfTravelers += booking.numberOfTravelers;
         }
         return acc;
     }, {});
@@ -324,12 +319,6 @@ const UserBookingStatus = () => {
             </div>
         );
     }
-
-    console.log('Current userId:', userId);
-    console.log('All bookings:', bookings);
-    console.log('Filtered bookings:', userBookings);
-    console.log('All payments:', payments);
-    console.log('Filtered payments:', userPayments);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">

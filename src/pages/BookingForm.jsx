@@ -45,7 +45,6 @@ const BookingForm = ({ _id }) => {
     };
     useEffect(() => {
         SetTotalAmout(price * bookingData.numberOfTravelers);
-        console.log(TotalAmount)
     })
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -74,7 +73,6 @@ const BookingForm = ({ _id }) => {
                     }
                 }
             );
-            console.log(response.data, "booking")
             if (response.status === 201) {
                 toast.success('Booking successful! Redirecting to payment...');
                 setBookingData({
@@ -89,8 +87,6 @@ const BookingForm = ({ _id }) => {
                     pincode: '',
                     status: ''
                 });
-                console.log(response.data, 228888)
-                console.log(response.data.bookingId)
                 setBookingId(response.data.bookingId);
                 navigate('/payment', { state: bookingDetails });
             }

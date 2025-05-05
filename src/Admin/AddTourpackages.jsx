@@ -50,8 +50,6 @@ const AddTourPackages = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-
         const uploadedImageUrl = await uploadImage();
         if (!uploadedImageUrl) {
             console.error('Image upload failed');
@@ -62,7 +60,6 @@ const AddTourPackages = () => {
 
         try {
             const response = await axios.post(`${apiUrl}/api/tours/admin/tourpackagesadd`, finalData);
-            console.log('Response:', response.data);
         } catch (error) {
             console.error('Error submitting form:', error);
         }
