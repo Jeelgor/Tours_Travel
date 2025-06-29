@@ -82,7 +82,7 @@ const UpdateTourDetail = () => {
         } catch (error) {
             console.error("Error fetching tour details:", error);
             toast.error("Failed to fetch tour details");
-            navigate("/admin-dashboard");
+            navigate("/admin");
         } finally {
             setInitialLoading(false);
         }
@@ -264,7 +264,7 @@ const UpdateTourDetail = () => {
             );
 
             toast.success("Tour package updated successfully!");
-            setTimeout(() => navigate("/admin-dashboard"), 2000);
+            setTimeout(() => navigate("/admin"), 2000);
         } catch (error) {
             console.error("Error updating tour package:", error);
             toast.error(error.response?.data?.message || "Error updating tour package");
@@ -314,7 +314,7 @@ const UpdateTourDetail = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <button
-                                onClick={() => navigate("/admin-dashboard")}
+                                onClick={() => navigate("/admin")}
                                 className="p-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-300 hover:scale-110"
                             >
                                 <ArrowLeft size={20} className="text-gray-600" />
