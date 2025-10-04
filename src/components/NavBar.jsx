@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { assets } from '../assets/asset';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { faXmark, faBars, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,18 +10,36 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const NavBar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const dropdownRef = useRef(null);
+
     const [token, setToken] = useState(true);
     const [isNavOpen, setIsNavOpen] = useState(false);
     const [userEmail, SetEmail] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
+    // Scroll effect
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        setIsDropdownOpen(false);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
     }, []);
 
     const navBarToggle = () => {
@@ -35,6 +53,7 @@ const NavBar = () => {
         navigate('/login');
     };
 
+    // Fetch user profile
     useEffect(() => {
         const fetchUser = async () => {
             const token = localStorage.getItem("authToken");
@@ -68,8 +87,8 @@ const NavBar = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'bg-white shadow-lg'
-                    : 'bg-white/95 backdrop-blur-md'
+                ? 'bg-white shadow-lg'
+                : 'bg-white/95 backdrop-blur-md'
                 }`}
         >
             <div className='px-4 py-2 mx-4 sm:mx-[4%]'>
@@ -114,7 +133,7 @@ const NavBar = () => {
                     {/* Profile Section */}
                     <div className='flex items-center space-x-3'>
                         {token ? (
-                            <div className="relative">
+                            <div className="relative" ref={dropdownRef}>
                                 <motion.div
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}

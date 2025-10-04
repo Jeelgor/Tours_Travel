@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { FaUsers, FaCalendarAlt, FaEnvelope, FaUser, FaComments } from 'react-icons/fa';
 import { useBooking } from '../context/BookingContext';
 import useSocket from '../hooks/useSocket';
+import { loadStripe } from '@stripe/stripe-js';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -45,7 +46,7 @@ const BookingForm = ({ _id }) => {
     };
     useEffect(() => {
         SetTotalAmout(price * bookingData.numberOfTravelers);
-    })
+    }, [price, bookingData.numberOfTravelers])
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -53,51 +54,31 @@ const BookingForm = ({ _id }) => {
         const bookingDetails = {
             ...bookingData,
             userId,
-            packageName,
-            packageType,
             packageId,
             price,
         };
 
         try {
-            // Get the auth token from localStorage
             const token = localStorage.getItem('authToken');
-
-            // Add token to request headers
             const response = await axios.post(
-                `${apiUrl}/api/book`,
+                `${apiUrl}/api/payment/create-checkout-session`,
                 bookingDetails,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
+                { headers: { 'Authorization': `Bearer ${token}` } }
             );
-            if (response.status === 201) {
-                toast.success('Booking successful! Redirecting to payment...');
-                setBookingData({
-                    name: '',
-                    email: '',
-                    numberOfTravelers: 1,
-                    specialRequests: '',
-                    fromDate: '',
-                    toDate: '',
-                    address: '',
-                    mobileNumber: '',
-                    pincode: '',
-                    status: ''
-                });
-                setBookingId(response.data.bookingId);
-                navigate('/payment', { state: bookingDetails });
-            }
+
+            const { sessionId } = response.data;
+            console.log(response.data);
+            const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+            const stripe = await stripePromise;
+            await stripe.redirectToCheckout({ sessionId });
+
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'An error occurred. Please try again later.';
-            toast.error(errorMessage);
-            console.error('Booking error:', error);
+            toast.error(error.response?.data?.message || 'Something went wrong');
         } finally {
             setIsLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">

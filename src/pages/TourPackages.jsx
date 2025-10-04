@@ -4,6 +4,7 @@ import bannerimg from "../assets/banner.png";
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
+import { io } from "socket.io-client";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -32,10 +33,31 @@ const TourPackages = () => {
     const today = new Date();
     const oneMonthLater = new Date(today);
     oneMonthLater.setMonth(today.getMonth() + 1);
-    const formattedToday = today.toISOString().split('T')[0];
-    const formattedNextMonth = oneMonthLater.toISOString().split('T')[0];
     const indexOfLastPackage = currentPage * packagesPerPage;
     const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
+    const socket = io("http://localhost:3000", {
+        withCredentials: true,
+    });
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log('Socket connected, id:', socket.id);
+        });
+        console.log("I am here in TourPackages.jsx");
+        socket.on("bookingConfirmed", (booking) => {
+            console.log("Booking confirmed received:", booking);
+        });
+        console.log("bookingConfirmed event listener set up");
+        socket.on('disconnect', () => {
+            console.log('Socket disconnected');
+        });
+
+        return () => {
+            socket.off("bookingConfirmed");
+            socket.off('connect');
+            socket.off('disconnect');
+        };
+    }, []);
 
     useEffect(() => {
         setSelectedPackageType(packageType);

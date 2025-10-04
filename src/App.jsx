@@ -32,6 +32,8 @@ import UpdateTourDetail from "./Admin/UpdateTour";
 import AdminBookings from "./Admin/AdminBookings";
 import UpdateTourPackages from "./Admin/UpdateTourPackages";
 import AdminSignUpUser from "./Admin/Adminauth";
+import ChatBox from "./components/ChatBox";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -68,6 +70,7 @@ function MainContent() {
     <>
       <div>
         {!hideNavBarRoutes.includes(location.pathname) && <NavBar />}
+        {/* <ChatBox /> */}
         <Routes>
           <Route path="/" element={<SignUpUser />} />
           <Route path="/login" element={<Login />} />
@@ -82,6 +85,8 @@ function MainContent() {
           <Route path="/my-package" element={<MyPackage />} />
           <Route path="/AddTourDetail" element={<AddTourDetail />} />
           <Route path="/UpdateTour" element={<UpdateTourDetail />} />
+          {/* other routes */}
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/BookingForm" element={<BookingForm />} />
           <Route path="/userbookingstatus" element={<ProtectedRoute><UserBookingStatus /></ProtectedRoute>} />
           <Route path="/package-detail/:pkgId" element={<PackageDetail />} />
