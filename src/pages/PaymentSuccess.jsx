@@ -13,7 +13,7 @@ const PaymentSuccess = () => {
     useEffect(() => {
         if (sessionId) {
             // Call your backend to verify the session & create booking
-            axios.post(`${apiUrl}/api/verify-checkout-session`, { sessionId })
+            axios.post(`${apiUrl}/api/stripe/verify-checkout-session`, { sessionId })
                 .then(res => {
                     toast.success('Payment confirmed and booking created!');
                 })

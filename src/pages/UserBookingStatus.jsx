@@ -15,11 +15,11 @@ const UserBookingStatus = () => {
     const [activeTab, setActiveTab] = useState("bookings");
     const { userId, setUserId } = useUser();
     const apiUrl = import.meta.env.VITE_API_URL
+    const token = localStorage.getItem("authToken");
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const token = localStorage.getItem("authToken");
                 const [bookingsRes, paymentsRes, userRes] = await Promise.all([
                     axios.get(`${apiUrl}/api/bookings`, {
                         headers: { Authorization: `Bearer ${token}` }
@@ -45,7 +45,6 @@ const UserBookingStatus = () => {
 
         fetchData();
     }, [setUserId]);
-
     const bookingIds = bookings.map(booking => booking._id);
     const handleCancelBooking = async (bookingId) => {
         // if (!window.confirm("Are you sure you want to cancel this booking?")) {
@@ -53,8 +52,13 @@ const UserBookingStatus = () => {
         // }
 
         try {
-            const response = await axios.post(`${apiUrl}/api/payment/cancel-booking`, {
+            const response = await axios.post(`${apiUrl}/api/CancleBooking`, {
                 bookingId,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
             });
 
             toast.custom((t) => (
