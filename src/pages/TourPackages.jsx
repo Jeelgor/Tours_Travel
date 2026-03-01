@@ -169,7 +169,7 @@ const TourPackages = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="relative z-10 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 p-6 md:p-8 shadow-2xl mt-12 backdrop-blur-sm">
+            <div className="relative z-10 p-6 md:p-8 shadow-2xl mt-12 backdrop-blur-sm">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
                         <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-2xl p-4 w-full md:flex-1 shadow-lg hover:shadow-xl transition-all duration-300 group">

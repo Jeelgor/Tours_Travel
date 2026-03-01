@@ -70,7 +70,7 @@ function MainContent() {
     <>
       <div>
         {!hideNavBarRoutes.includes(location.pathname) && <NavBar />}
-        {/* <ChatBox /> */}
+        <ChatBox />
         <Routes>
           <Route path="/" element={<SignUpUser />} />
           <Route path="/login" element={<Login />} />
