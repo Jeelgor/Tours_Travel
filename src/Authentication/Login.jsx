@@ -26,6 +26,7 @@ const Login = () => {
       const { token } = loginResponse.data;
       if (token) {
         localStorage.setItem("authToken", token);
+        localStorage.setItem("otpEmail", Email);
         navigate('/OtpVerification');
         accessProtectedRoute();
       } else {

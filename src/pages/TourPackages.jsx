@@ -242,7 +242,6 @@ const TourPackages = () => {
                                 {["Group Tour", "Cruise Packages", "Family Specials"].map(type => (
                                     <button
                                         key={type}
-                                        onClick={() => handleTabClick(type)}
                                         className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${selectedPackageType === type
                                             ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
                                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"

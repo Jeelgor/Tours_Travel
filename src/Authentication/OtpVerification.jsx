@@ -13,6 +13,7 @@ const OtpVerification = () => {
     const [shake, setShake] = useState(false);
     const [activeInput, setActiveInput] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const Email = localStorage.getItem("otpEmail");
 
     // Handle OTP input change
     const handleChange = (e, index) => {
@@ -55,8 +56,9 @@ const OtpVerification = () => {
 
         setIsLoading(true);
         try {
-            await axios.post(`${apiUrl}/Auth/users/verify-Otp`, { otp: otpString });
+            await axios.post(`${apiUrl}/Auth/users/verify-Otp`, { otp: otpString, Email });
             toast.success("OTP verified successfully!");
+            localStorage.removeItem("otpEmail");
             setTimeout(() => navigate('/homepage'), 1500);
         } catch (err) {
             console.error(err);

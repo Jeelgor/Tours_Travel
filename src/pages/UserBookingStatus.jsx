@@ -35,6 +35,7 @@ const UserBookingStatus = () => {
 
                 setUserId(userRes.data._id);
                 setBookings(bookingsRes.data.data);
+                console.log(bookings)
                 setPayments(paymentsRes.data.data);
 
             } catch (error) {
