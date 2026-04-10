@@ -37,8 +37,16 @@ const PackageBookingCard = ({
                                 </button>
                                 <span className="w-12 text-center font-bold text-lg">{numTravellers}</span>
                                 <button
-                                    onClick={() => setNumTravellers(numTravellers + 1)}
-                                    className="w-10 h-10 bg-white rounded-full shadow-md hover:shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                                    onClick={() => {
+                                        if (numTravellers < seatLeft) {
+                                            setNumTravellers(numTravellers + 1);
+                                        } else {
+                                            import('react-toastify').then(({ toast }) => {
+                                                toast.warning(`Only ${seatLeft} seats available`);
+                                            });
+                                        }
+                                    }}
+                                    className={`w-10 h-10 bg-white rounded-full shadow-md hover:shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${numTravellers >= seatLeft ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
                                     <Plus size={16} className="text-gray-600" />
                                 </button>

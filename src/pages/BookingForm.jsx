@@ -60,6 +60,14 @@ const BookingForm = ({ _id }) => {
 
         try {
             const token = localStorage.getItem('authToken');
+            
+            // Final client-side check before calling server
+            if (tourSeats !== null && bookingData.numberOfTravelers > tourSeats) {
+                toast.error(`Only ${tourSeats} seats available`);
+                setIsLoading(false);
+                return;
+            }
+
             const response = await axios.post(
                 `${apiUrl}/api/payment/create-checkout-session`,
                 bookingDetails,
@@ -67,13 +75,19 @@ const BookingForm = ({ _id }) => {
             );
 
             const { sessionId } = response.data;
-            console.log(response.data);
             const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
             const stripe = await stripePromise;
+            
+            // Note: Since we reserve seats in create-checkout-session, 
+            // if the user closes the Stripe tab without paying, we rely on 
+            // the background task (cancelExpiredBookings) or a 'cancel' redirect 
+            // to restore seats.
             await stripe.redirectToCheckout({ sessionId });
 
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Something went wrong');
+            console.error("Booking error:", error);
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Something went wrong';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
